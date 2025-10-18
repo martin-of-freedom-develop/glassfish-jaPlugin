@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2021, 2024 Contributors to the Eclipse Foundation.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.tests.tck</groupId>
+        <artifactId>tck</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>tck-download</artifactId>
+    <packaging>pom</packaging>
+    <name>TCK: Download and Install Dependencies not in Maven Repos</name>
+
+    <properties>
+        <tck.artifactFileType>zip</tck.artifactFileType>
+        <tck.artifactFileName>${project.artifactId}.${tck.artifactFileType}</tck.artifactFileName>
+        <tck.artifactFile>${project.build.directory}/${tck.artifactFileName}</tck.artifactFile>
+    </properties>
+
+    <modules>
+        <module>jakarta-platform-tck</module>
+        <module>jakarta-activation-tck</module>
+        <module>jakarta-rest-tck</module>
+        <module>jakarta-faces-tck</module>
+        <module>jakarta-connectors-tck</module>
+        <module>jakarta-pages-tck</module>
+        <module>jakarta-pages-tags-tck</module>
+        <module>jakarta-pages-debugging-tck</module>
+        <module>jakarta-security-tck</module>
+        <module>jakarta-servlet-tck</module>
+        <module>jakarta-authentication-tck</module>
+        <module>jakarta-authorization-tck</module>
+        <module>jakarta-expression-language-tck</module>
+        <module>jakarta-websocket-tck</module>
+        <module>tsharness</module>
+        <module>javatest</module>
+    </modules>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>io.github.download-maven-plugin</groupId>
+                    <artifactId>download-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>download-tck</id>
+                            <phase>generate-resources</phase>
+                            <goals>
+                                <goal>wget</goal>
+                            </goals>
+                            <configuration>
+                                <url>${tck.artifactUrl}</url>
+                                <unpack>false</unpack>
+                                <outputFileName>${tck.artifactFileName}</outputFileName>
+                                <outputDirectory>${project.build.directory}</outputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>build-helper-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>attach-tck</id>
+                            <phase>package</phase>
+                            <goals>
+                                <goal>attach-artifact</goal>
+                            </goals>
+                            <configuration>
+                                <artifacts>
+                                    <artifact>
+                                        <file>${tck.artifactFile}</file>
+                                        <type>${tck.artifactFileType}</type>
+                                    </artifact>
+                                </artifacts>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>io.github.download-maven-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>download-tck</id>
+                        <phase>skip-in-parent</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>attach-tck</id>
+                        <phase>skip-in-parent</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>disable-deploy</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>disabled</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+<!--
+    As an alternative we can download all non-maven dependencies and
+    deploy them to some custom maven repository.
+    You can use "paired" profile in settings.xml for that.
+    <profile>
+        <id>local-deploy</id>
+        <properties>
+            <altDeploymentRepository>my-snapshots::default::http://mydocker:8888/repository/maven-snapshots</altDeploymentRepository>
+            <altSnapshotDeploymentRepository>my-snapshots::default::http://mydocker:8888/repository/maven-snapshots</altSnapshotDeploymentRepository>
+        </properties>
+        <repositories>
+            <repository>
+                <id>my-snapshots</id>
+                <name>my-snapshots</name>
+                <url>http://mydocker:8888/repository/cache</url>
+                <releases>
+                    <enabled>true</enabled>
+                </releases>
+                <snapshots>
+                    <enabled>true</enabled>
+                </snapshots>
+            </repository>
+        </repositories>
+    </profile>
+-->
+        <profile>
+            <id>local-deploy</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-deploy-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>default-deploy</id>
+                                <phase>deploy</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

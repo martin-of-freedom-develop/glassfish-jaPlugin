@@ -1,0 +1,17 @@
+type=page
+status=published
+title=Using Services and APIs
+next=jdbc.html
+prev=osgi.html
+~~~~~~
+
+= Using Services and APIs
+
+:sectnums!:
+[[part-iii]]
+== Part III
+
+:sectnums:
+[[using-services-and-apis]]
+== Using Services and APIs
+

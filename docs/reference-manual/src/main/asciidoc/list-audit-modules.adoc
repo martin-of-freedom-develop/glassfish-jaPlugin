@@ -1,0 +1,82 @@
+type=page
+status=published
+title=list-audit-modules
+next=list-auth-realms.html
+prev=list-applications.html
+~~~~~~
+
+= list-audit-modules
+
+[[list-audit-modules]]
+
+== list-audit-modules
+
+Gets all audit modules and displays them
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-audit-modules [--help]
+[target]
+----
+
+=== Description
+
+The `list-audit-modules` subcommand lists all the audit modules. This
+subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  Specifies the target on which you are listing the audit modules. Valid
+  values are as follows:
+
+  `server`;;
+    Lists the audit modules for the default server instance `server` and
+    is the default value.
+  configuration_name;;
+    Lists the audit modules for the named configuration.
+  cluster_name;;
+    Lists the audit modules for every server instance in the cluster.
+  instance_name;;
+    Lists the audit modules for a particular server instance.
+
+=== Examples
+
+[[sthref1321]]
+
+==== Example 1   Listing Audit Modules
+
+[source]
+----
+asadmin> list-audit-modules
+sampleAuditModule1
+sampleAuditModule2
+Command list-audit-modules executed successfully
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-audit-module.adoc#create-audit-module[`create-audit-module`(1)],
+xref:delete-audit-module.adoc#delete-audit-module[`delete-audit-module`(1)]
+
+

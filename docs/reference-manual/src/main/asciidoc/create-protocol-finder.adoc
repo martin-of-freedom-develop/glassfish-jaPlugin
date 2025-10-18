@@ -1,0 +1,83 @@
+type=page
+status=published
+title=create-protocol-finder
+next=create-resource-adapter-config.html
+prev=create-protocol-filter.html
+~~~~~~
+
+= create-protocol-finder
+
+[[create-protocol-finder]]
+
+== create-protocol-finder
+
+Adds a new protocol finder
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] create-protocol-finder [--help]
+--protocol protocol-name
+--targetprotocol target-protocol-name
+--classname class-name
+[--target server]
+protocol-finder-name
+----
+
+=== Description
+
+The `create-protocol-finder` subcommand creates a protocol finder for a
+protocol. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--protocol`::
+  The name of the associated protocol.
+`--targetprotocol`::
+  The name of the target protocol.
+`--classname`::
+  The fully qualified name of the Java class that implements the
+  protocol finder.
+`--target`::
+  Creates the protocol finder only on the specified target. Valid values
+  are as follows:
+
+  `server`;;
+    Creates the protocol finder on the default server instance. This is
+    the default value.
+  configuration-name;;
+    Creates the protocol finder in the specified configuration.
+  cluster-name;;
+    Creates the protocol finder on all server instances in the specified
+    cluster.
+  standalone-instance-name;;
+    Creates the protocol finder on the specified standalone server
+    instance.
+
+=== Operands
+
+protocol-finder-name::
+  The name of the protocol finder.
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:delete-protocol-finder.adoc#delete-protocol-finder[`delete-protocol-finder`(1)],
+xref:list-protocol-finders.adoc#list-protocol-finders[`list-protocol-finders`(1)]
+
+

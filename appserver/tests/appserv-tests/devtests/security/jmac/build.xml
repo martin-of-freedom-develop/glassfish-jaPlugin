@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright (c) 2013, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<!DOCTYPE project [
+<!ENTITY commonSetup SYSTEM "../../../config/properties.xml">
+<!ENTITY commonBuild SYSTEM "../../../config/common.xml">
+<!ENTITY commonRun SYSTEM "../../../config/run.xml">
+<!ENTITY commonSecurity SYSTEM "../common.xml">
+]>
+
+
+<project name="wss" default="usage" basedir=".">
+    &commonSetup;
+    &commonBuild;
+    &commonSecurity;
+    &commonRun;
+
+    <target name="all">
+        <run-jmac-test path="soap" />
+        <run-jmac-test path="soapDefault" />
+    </target>
+
+    <macrodef name="run-jmac-test" xmlns:if="ant:if" xmlns:unless="ant:unless">
+        <attribute name="path" />
+        <sequential>
+            <local name="do-run-test" />
+            <condition property="do-run-test" else="false">
+                <or>
+                    <equals arg1="${env.security_jmac}" arg2="@{path}" />
+                    <not>
+                        <isset property="env.security_jmac" />
+                    </not>
+                </or>
+            </condition>
+
+            <echo message="env.security_jmac = ${env.security_jmac}, current path = @{path}" />
+
+            <sequential if:true="${do-run-test}">
+                <local name="absolute.path" />
+                <property name="absolute.path" location="@{path}" />
+                <echo message="${line.separator}" />
+                <echo
+                    message=" ***************************************************************************" />
+                <echo message=" * Running @{path} " />
+                <echo message=" * Path: ${absolute.path} " />
+                <echo
+                    message=" ***************************************************************************" />
+                <echo message="${line.separator}" />
+                <ant dir="@{path}" target="all" />
+            </sequential>
+        </sequential>
+    </macrodef>
+</project>

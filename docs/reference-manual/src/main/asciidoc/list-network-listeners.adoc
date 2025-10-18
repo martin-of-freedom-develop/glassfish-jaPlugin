@@ -1,0 +1,86 @@
+type=page
+status=published
+title=list-network-listeners
+next=list-nodes.html
+prev=list-modules.html
+~~~~~~
+
+= list-network-listeners
+
+[[list-network-listeners]]
+
+== list-network-listeners
+
+Lists the existing network listeners
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-network-listeners [--help]
+[target]
+----
+
+=== Description
+
+The `list-network-listeners` subcommand lists the existing network
+listeners. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  Restricts the listing to network listeners for a specified target.
+  Valid values are as follows:
+
+  `server`;;
+    Lists the network listeners for the default server instance. This is
+    the default value.
+  configuration-name;;
+    Lists the network listeners for the specified configuration.
+  cluster-name;;
+    Lists the network listeners for all server instances in the
+    specified cluster.
+  instance-name;;
+    Lists the network listeners for the specified server instance.
+
+=== Examples
+
+[[sthref1697]]
+
+==== Example 1   Listing Network Listeners
+
+The following command lists all the network listeners for the server instance:
+
+[source]
+----
+asadmin> list-network-listeners
+admin-listener
+http-listener-1
+https-listener-2
+Command list-network-listeners executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-network-listener.adoc#create-network-listener[`create-network-listener`(1)],
+xref:delete-network-listener.adoc#delete-network-listener[`delete-network-listener`(1)]
+
+

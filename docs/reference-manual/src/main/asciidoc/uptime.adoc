@@ -1,0 +1,70 @@
+type=page
+status=published
+title=uptime
+next=validate-multicast.html
+prev=update-password-alias.html
+~~~~~~
+
+= uptime
+
+[[uptime]]
+
+== uptime
+
+Returns the length of time that the DAS has been running
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] uptime [--help]
+----
+
+=== Description
+
+The `uptime` subcommand returns the length of time that the domain
+administration server (DAS) has been running since it was last
+restarted.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Examples
+
+[[sthref2320]]
+
+==== Example 1   Showing How Long the DAS Has Been Running
+
+This example shows the length of time that the DAS has been running.
+
+[source]
+----
+asadmin> uptime
+Uptime: 2 days, 1 hours, 30 minutes, 18 seconds, Total milliseconds: 178218706
+Command uptime executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:list-domains.adoc#list-domains[`list-domains`(1)],
+xref:start-domain.adoc#start-domain[`start-domain`(1)],
+xref:stop-domain.adoc#stop-domain[`stop-domain`(1)]
+
+

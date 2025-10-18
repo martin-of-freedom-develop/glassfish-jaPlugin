@@ -1,0 +1,141 @@
+type=page
+status=published
+title=list-log-levels
+next=list-mail-resources.html
+prev=list-loggers.html
+~~~~~~
+
+= list-log-levels
+
+[[list-log-levels]]
+
+== list-log-levels
+
+Lists the loggers and their log levels
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-log-levels [--help]
+[--target target]
+----
+
+=== Description
+
+The `list-log-levels` subcommand lists the current {productName}
+loggers and their log levels. This subcommand reports on all the loggers
+that are listed in the `logging.properties` file. In some cases, loggers
+that have not been created by the respective containers will appear in
+the list.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  The server, cluster or server instance for which log levels will be listed.
+
+=== Operands
+
+target::
+  Valid values are:
+
+  * server_name - Default target is `server`. If no target is specified
+  then log levels are listed for the server.
+  * cluster_name - The name of a target cluster.
+  * instance_name - The name of a target server instance.
+
+=== Examples
+
+[[sthref1650]]
+
+==== Example 1   Listing the Log Levels
+
+This example lists the existing loggers and indicates how their log
+levels are set.
+
+[source]
+----
+asadmin> list-log-levels
+MBeans  <INFO>
+com.sun.enterprise.glassfish.bootstrap  <INFO>
+com.sun.enterprise.glassfish    <INFO>
+com.sun.enterprise.security     <INFO>
+com.sun.webui   <INFO>
+jakarta.enterprise.admin.rest.client    <INFO>
+jakarta.enterprise.admin.rest.connector <INFO>
+jakarta.enterprise.admin.rest   <INFO>
+jakarta.enterprise.bootstrap    <INFO>
+jakarta.enterprise.cluster.gms.admin    <INFO>
+jakarta.enterprise.cluster.gms.bootstrap        <INFO>
+jakarta.enterprise.cluster.gms  <INFO>
+jakarta.enterprise.concurrent   <INFO>
+jakarta.enterprise.config.api   <INFO>
+jakarta.enterprise.connector.work       <INFO>
+jakarta.enterprise.ejb.container        <INFO>
+jakarta.enterprise.inject       <INFO>
+jakarta.enterprise.inject.spi   <INFO>
+jakarta.enterprise.launcher     <INFO>
+jakarta.enterprise.logging      <INFO>
+jakarta.enterprise.monitoring   <INFO>
+jakarta.enterprise.osgi.container       <INFO>
+jakarta.enterprise.resource.corba       <INFO>
+jakarta.enterprise.resource.javamail    <INFO>
+jakarta.enterprise.resource.jdo <INFO>
+jakarta.enterprise.resource.jms.injection       <INFO>
+jakarta.enterprise.resource.jms <INFO>
+jakarta.enterprise.resource.jta <INFO>
+jakarta.enterprise.resource.resourceadapter     <INFO>
+...
+jakarta.ws.rs.client    <INFO>
+org.apache.catalina     <INFO>
+org.apache.coyote       <INFO>
+org.apache.jasper       <INFO>
+org.eclipse.krazo       <INFO>
+org.eclipse.persistence.session <INFO>
+org.glassfish.admingui  <INFO>
+org.glassfish.grizzly.http2     <INFO>
+org.glassfish.grizzly   <INFO>
+org.glassfish.jersey    <INFO>
+org.glassfish.jersey.message.internal.TracingLogger     <INFO>
+org.glassfish   <INFO>
+org.glassfish.main.jul.handler.GlassFishLogHandler      <ALL>
+org.glassfish.main.jul.handler.SimpleLogHandler <INFO>
+org.glassfish.main      <INFO>
+org.glassfish.naming    <INFO>
+org.glassfish.persistence       <INFO>
+org.glassfish.security  <INFO>
+org.hibernate.validator.internal.util.Version   <WARNING>
+org.jvnet.hk2   <INFO>
+org.jvnet.hk2.osgiadapter       <WARNING>
+sun     <INFO>
+Command list-log-levels executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:collect-log-files.adoc#collect-log-files[`collect-log-files`(1)],
+xref:list-log-attributes.adoc#list-log-attributes[`list-log-attributes`(1)],
+xref:rotate-log.adoc#rotate-log[`rotate-log`(1)],
+xref:set-log-attributes.adoc#set-log-attributes[`set-log-attributes`(1)],
+xref:set-log-levels.adoc#set-log-levels[`set-log-levels`(1)]
+
+"xref:administration-guide.adoc#administering-the-logging-service[Administering the Logging Service]" in {productName} Administration Guide
+
+

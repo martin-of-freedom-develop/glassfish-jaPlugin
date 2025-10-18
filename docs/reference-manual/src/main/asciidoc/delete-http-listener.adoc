@@ -1,0 +1,104 @@
+type=page
+status=published
+title=delete-http-listener
+next=delete-http-redirect.html
+prev=delete-http-lb-ref.html
+~~~~~~
+
+= delete-http-listener
+
+[[delete-http-listener]]
+
+== delete-http-listener
+
+Removes a network listener
+
+[[administering-concurrent-resources1]]
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] delete-http-listener [--help]
+[--target target]
+listener-id
+----
+
+[[administering-concurrent-resources2]]
+
+=== Description
+
+The `delete-http-listener` subcommand removes the specified network
+listener.
+
+This subcommand is supported in remote mode only.
+
+[[administering-concurrent-resources3]]
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  Deletes the network listener only from the specified target. Valid
+  values are as follows:
+
+  `server`;;
+    Deletes the network listener from the default server instance. This
+    is the default value.
+  configuration-name;;
+    Deletes the network listener from the specified configuration.
+  cluster-name;;
+    Deletes the network listener from all server instances in the
+    specified cluster.
+  standalone-instance-name;;
+    Deletes the network listener from the specified standalone server
+    instance.
+
+[[administering-concurrent-resources4]]
+
+=== Operands
+
+listener-id::
+  The unique identifier for the network listener to be deleted.
+
+[[administering-concurrent-resources5]]
+
+=== Examples
+
+[[administering-concurrent-resources6]]
+
+==== Example 1   Using the delete-http-listener subcommand
+
+The following command deletes the network listener named
+`sampleListener`:
+
+[source]
+----
+asadmin> delete-http-listener sampleListener
+Command delete-http-listener executed successfully.
+----
+
+[[administering-concurrent-resources7]]
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+[[administering-concurrent-resources8]]
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-http-listener.adoc#create-http-listener[`create-http-listener`(1)],
+xref:list-http-listeners.adoc#list-http-listeners[`list-http-listeners`(1)]
+
+

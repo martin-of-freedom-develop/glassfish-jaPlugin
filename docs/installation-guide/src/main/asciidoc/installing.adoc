@@ -1,0 +1,747 @@
+type=page
+status=published
+title=Installing {productName} {product-majorVersion}
+next=uninstalling.html
+prev=preface.html
+~~~~~~
+
+= Installing {productName} {product-majorVersion}
+
+[[ggssq]]
+
+
+[[installing-glassfish-server-5.0]]
+== 1 Installing {productName} {product-majorVersion}
+
+This chapter provides instructions for installing {productName} {product-majorVersion}
+software on Linux, Mac OS X, and Windows systems.
+
+The following topics are addressed here:
+
+* xref:#installation-requirements[Installation Requirements]
+* xref:#GSING00023[Installation Files for {productName} {product-majorVersion}]
+* xref:#installing-glassfish-server-from-a-zip-file[Installing {productName} From a ZIP File]
+
+[[installation-requirements]]
+
+=== Installation Requirements
+
+Before installing {productName} {product-majorVersion}, ensure that
+your system meets the requirements listed in "xref:release-notes.adoc#hardware-and-software-requirements[Hardware
+and Software Requirements]" in {productName}
+Release Notes. If necessary, download and install the required JDK
+software. Problems are likely to arise if you attempt to install on a
+platform that is not supported or on a system that in some other way
+does not meet release requirements. Also see "xref:release-notes.adoc#GSRLN00253[Known
+Issues]" in {productName} Release Notes for known
+issues related to installation.
+
+* On Linux, macOS and Windows systems, JDK software is available from the
+https://adoptium.net/temurin/releases[Eclipse Temurin JDK downloads page].
+
+[[javassist-library-license-notice]]
+
+==== Javassist Library License Notice
+
+You are receiving a copy of the Javassist (Java Programming Assistant)
+Library in source form at
+`https://github.com/jboss-javassist/javassist/raw/refs/heads/master/javassist.jar`
+and in object code form in the jar file
+`glassfish/modules/javassist.jar` included with the
+distribution. The terms of the Eclipse Foundation license do NOT apply to the
+Javassist (Java Programming Assistant) program; it is licensed under the
+following license, separately from the Eclipse Foundation programs you receive. If
+you do not wish to install this program, you may choose to not proceed
+with the installation of {productName}.
+
+"The contents of this file are subject to the Mozilla Public License
+Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+`http://www.mozilla.org/MPL/`
+
+Software distributed under the License is distributed on an "AS
+IS"basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+the License for the specific language governing rights and limitations
+under the License. The Original Code is Javassist 3.14.0.GA. The Initial
+Developer of the Original Code is Shigeru Chiba. Portions created by
+Shigeru Chiba are Copyright (C) 1999-2010. All Rights Reserved.
+
+Alternatively, the contents of this file may be used under the terms of
+GNU Lesser General Public License Version 2.1 or later (the "LGPL"), in
+which case the provisions of the LGPL License are applicable instead of
+those above. If you wish to allow use of your version of this file only
+under the terms of the LGPL License and not to allow others to use your
+version of this file under the MPL, indicate your decision by deleting
+the provisions above and replace them with the notice and other
+provisions required by the LGPL License. If you do not delete the
+provisions above, a recipient may use your version of this file under
+either the MPL or the LGPL License."
+
+[subs="none"]
+----
+Mozilla Public License Version 2.0
+==================================
+
+1. Definitions
+--------------
+
+1.1. "Contributor"
+    means each individual or legal entity that creates, contributes to
+    the creation of, or owns Covered Software.
+
+1.2. "Contributor Version"
+    means the combination of the Contributions of others (if any) used
+    by a Contributor and that particular Contributor's Contribution.
+
+1.3. "Contribution"
+    means Covered Software of a particular Contributor.
+
+1.4. "Covered Software"
+    means Source Code Form to which the initial Contributor has attached
+    the notice in Exhibit A, the Executable Form of such Source Code
+    Form, and Modifications of such Source Code Form, in each case
+    including portions thereof.
+
+1.5. "Incompatible With Secondary Licenses"
+    means
+
+    (a) that the initial Contributor has attached the notice described
+        in Exhibit B to the Covered Software; or
+
+    (b) that the Covered Software was made available under the terms of
+        version 1.1 or earlier of the License, but not also under the
+        terms of a Secondary License.
+
+1.6. "Executable Form"
+    means any form of the work other than Source Code Form.
+
+1.7. "Larger Work"
+    means a work that combines Covered Software with other material, in
+    a separate file or files, that is not Covered Software.
+
+1.8. "License"
+    means this document.
+
+1.9. "Licensable"
+    means having the right to grant, to the maximum extent possible,
+    whether at the time of the initial grant or subsequently, any and
+    all of the rights conveyed by this License.
+
+1.10. "Modifications"
+    means any of the following:
+
+    (a) any file in Source Code Form that results from an addition to,
+        deletion from, or modification of the contents of Covered
+        Software; or
+
+    (b) any new file in Source Code Form that contains any Covered
+        Software.
+
+1.11. "Patent Claims" of a Contributor
+    means any patent claim(s), including without limitation, method,
+    process, and apparatus claims, in any patent Licensable by such
+    Contributor that would be infringed, but for the grant of the
+    License, by the making, using, selling, offering for sale, having
+    made, import, or transfer of either its Contributions or its
+    Contributor Version.
+
+1.12. "Secondary License"
+    means either the GNU General Public License, Version 2.0, the GNU
+    Lesser General Public License, Version 2.1, the GNU Affero General
+    Public License, Version 3.0, or any later versions of those
+    licenses.
+
+1.13. "Source Code Form"
+    means the form of the work preferred for making modifications.
+
+1.14. "You" (or "Your")
+    means an individual or a legal entity exercising rights under this
+    License. For legal entities, "You" includes any entity that
+    controls, is controlled by, or is under common control with You. For
+    purposes of this definition, "control" means (a) the power, direct
+    or indirect, to cause the direction or management of such entity,
+    whether by contract or otherwise, or (b) ownership of more than
+    fifty percent (50%) of the outstanding shares or beneficial
+    ownership of such entity.
+
+2. License Grants and Conditions
+--------------------------------
+
+2.1. Grants
+
+Each Contributor hereby grants You a world-wide, royalty-free,
+non-exclusive license:
+
+(a) under intellectual property rights (other than patent or trademark)
+    Licensable by such Contributor to use, reproduce, make available,
+    modify, display, perform, distribute, and otherwise exploit its
+    Contributions, either on an unmodified basis, with Modifications, or
+    as part of a Larger Work; and
+
+(b) under Patent Claims of such Contributor to make, use, sell, offer
+    for sale, have made, import, and otherwise transfer either its
+    Contributions or its Contributor Version.
+
+2.2. Effective Date
+
+The licenses granted in Section 2.1 with respect to any Contribution
+become effective for each Contribution on the date the Contributor first
+distributes such Contribution.
+
+2.3. Limitations on Grant Scope
+
+The licenses granted in this Section 2 are the only rights granted under
+this License. No additional rights or licenses will be implied from the
+distribution or licensing of Covered Software under this License.
+Notwithstanding Section 2.1(b) above, no patent license is granted by a
+Contributor:
+
+(a) for any code that a Contributor has removed from Covered Software;
+    or
+
+(b) for infringements caused by: (i) Your and any other third party's
+    modifications of Covered Software, or (ii) the combination of its
+    Contributions with other software (except as part of its Contributor
+    Version); or
+
+(c) under Patent Claims infringed by Covered Software in the absence of
+    its Contributions.
+
+This License does not grant any rights in the trademarks, service marks,
+or logos of any Contributor (except as may be necessary to comply with
+the notice requirements in Section 3.4).
+
+2.4. Subsequent Licenses
+
+No Contributor makes additional grants as a result of Your choice to
+distribute the Covered Software under a subsequent version of this
+License (see Section 10.2) or under the terms of a Secondary License (if
+permitted under the terms of Section 3.3).
+
+2.5. Representation
+
+Each Contributor represents that the Contributor believes its
+Contributions are its original creation(s) or it has sufficient rights
+to grant the rights to its Contributions conveyed by this License.
+
+2.6. Fair Use
+
+This License is not intended to limit any rights You have under
+applicable copyright doctrines of fair use, fair dealing, or other
+equivalents.
+
+2.7. Conditions
+
+Sections 3.1, 3.2, 3.3, and 3.4 are conditions of the licenses granted
+in Section 2.1.
+
+3. Responsibilities
+-------------------
+
+3.1. Distribution of Source Form
+
+All distribution of Covered Software in Source Code Form, including any
+Modifications that You create or to which You contribute, must be under
+the terms of this License. You must inform recipients that the Source
+Code Form of the Covered Software is governed by the terms of this
+License, and how they can obtain a copy of this License. You may not
+attempt to alter or restrict the recipients' rights in the Source Code
+Form.
+
+3.2. Distribution of Executable Form
+
+If You distribute Covered Software in Executable Form then:
+
+(a) such Covered Software must also be made available in Source Code
+    Form, as described in Section 3.1, and You must inform recipients of
+    the Executable Form how they can obtain a copy of such Source Code
+    Form by reasonable means in a timely manner, at a charge no more
+    than the cost of distribution to the recipient; and
+
+(b) You may distribute such Executable Form under the terms of this
+    License, or sublicense it under different terms, provided that the
+    license for the Executable Form does not attempt to limit or alter
+    the recipients' rights in the Source Code Form under this License.
+
+3.3. Distribution of a Larger Work
+
+You may create and distribute a Larger Work under terms of Your choice,
+provided that You also comply with the requirements of this License for
+the Covered Software. If the Larger Work is a combination of Covered
+Software with a work governed by one or more Secondary Licenses, and the
+Covered Software is not Incompatible With Secondary Licenses, this
+License permits You to additionally distribute such Covered Software
+under the terms of such Secondary License(s), so that the recipient of
+the Larger Work may, at their option, further distribute the Covered
+Software under the terms of either this License or such Secondary
+License(s).
+
+3.4. Notices
+
+You may not remove or alter the substance of any license notices
+(including copyright notices, patent notices, disclaimers of warranty,
+or limitations of liability) contained within the Source Code Form of
+the Covered Software, except that You may alter any license notices to
+the extent required to remedy known factual inaccuracies.
+
+3.5. Application of Additional Terms
+
+You may choose to offer, and to charge a fee for, warranty, support,
+indemnity or liability obligations to one or more recipients of Covered
+Software. However, You may do so only on Your own behalf, and not on
+behalf of any Contributor. You must make it absolutely clear that any
+such warranty, support, indemnity, or liability obligation is offered by
+You alone, and You hereby agree to indemnify every Contributor for any
+liability incurred by such Contributor as a result of warranty, support,
+indemnity or liability terms You offer. You may include additional
+disclaimers of warranty and limitations of liability specific to any
+jurisdiction.
+
+4. Inability to Comply Due to Statute or Regulation
+---------------------------------------------------
+
+If it is impossible for You to comply with any of the terms of this
+License with respect to some or all of the Covered Software due to
+statute, judicial order, or regulation then You must: (a) comply with
+the terms of this License to the maximum extent possible; and (b)
+describe the limitations and the code they affect. Such description must
+be placed in a text file included with all distributions of the Covered
+Software under this License. Except to the extent prohibited by statute
+or regulation, such description must be sufficiently detailed for a
+recipient of ordinary skill to be able to understand it.
+
+5. Termination
+--------------
+
+5.1. The rights granted under this License will terminate automatically
+if You fail to comply with any of its terms. However, if You become
+compliant, then the rights granted under this License from a particular
+Contributor are reinstated (a) provisionally, unless and until such
+Contributor explicitly and finally terminates Your grants, and (b) on an
+ongoing basis, if such Contributor fails to notify You of the
+non-compliance by some reasonable means prior to 60 days after You have
+come back into compliance. Moreover, Your grants from a particular
+Contributor are reinstated on an ongoing basis if such Contributor
+notifies You of the non-compliance by some reasonable means, this is the
+first time You have received notice of non-compliance with this License
+from such Contributor, and You become compliant prior to 30 days after
+Your receipt of the notice.
+
+5.2. If You initiate litigation against any entity by asserting a patent
+infringement claim (excluding declaratory judgment actions,
+counter-claims, and cross-claims) alleging that a Contributor Version
+directly or indirectly infringes any patent, then the rights granted to
+You by any and all Contributors for the Covered Software under Section
+2.1 of this License shall terminate.
+
+5.3. In the event of termination under Sections 5.1 or 5.2 above, all
+end user license agreements (excluding distributors and resellers) which
+have been validly granted by You or Your distributors under this License
+prior to termination shall survive termination.
+
+************************************************************************
+*                                                                      *
+*  6. Disclaimer of Warranty                                           *
+*  -------------------------                                           *
+*                                                                      *
+*  Covered Software is provided under this License on an "as is"       *
+*  basis, without warranty of any kind, either expressed, implied, or  *
+*  statutory, including, without limitation, warranties that the       *
+*  Covered Software is free of defects, merchantable, fit for a        *
+*  particular purpose or non-infringing. The entire risk as to the     *
+*  quality and performance of the Covered Software is with You.        *
+*  Should any Covered Software prove defective in any respect, You     *
+*  (not any Contributor) assume the cost of any necessary servicing,   *
+*  repair, or correction. This disclaimer of warranty constitutes an   *
+*  essential part of this License. No use of any Covered Software is   *
+*  authorized under this License except under this disclaimer.         *
+*                                                                      *
+************************************************************************
+
+************************************************************************
+*                                                                      *
+*  7. Limitation of Liability                                          *
+*  --------------------------                                          *
+*                                                                      *
+*  Under no circumstances and under no legal theory, whether tort      *
+*  (including negligence), contract, or otherwise, shall any           *
+*  Contributor, or anyone who distributes Covered Software as          *
+*  permitted above, be liable to You for any direct, indirect,         *
+*  special, incidental, or consequential damages of any character      *
+*  including, without limitation, damages for lost profits, loss of    *
+*  goodwill, work stoppage, computer failure or malfunction, or any    *
+*  and all other commercial damages or losses, even if such party      *
+*  shall have been informed of the possibility of such damages. This   *
+*  limitation of liability shall not apply to liability for death or   *
+*  personal injury resulting from such party's negligence to the       *
+*  extent applicable law prohibits such limitation. Some               *
+*  jurisdictions do not allow the exclusion or limitation of           *
+*  incidental or consequential damages, so this exclusion and          *
+*  limitation may not apply to You.                                    *
+*                                                                      *
+************************************************************************
+
+8. Litigation
+-------------
+
+Any litigation relating to this License may be brought only in the
+courts of a jurisdiction where the defendant maintains its principal
+place of business and such litigation shall be governed by laws of that
+jurisdiction, without reference to its conflict-of-law provisions.
+Nothing in this Section shall prevent a party's ability to bring
+cross-claims or counter-claims.
+
+9. Miscellaneous
+----------------
+
+This License represents the complete agreement concerning the subject
+matter hereof. If any provision of this License is held to be
+unenforceable, such provision shall be reformed only to the extent
+necessary to make it enforceable. Any law or regulation which provides
+that the language of a contract shall be construed against the drafter
+shall not be used to construe this License against a Contributor.
+
+10. Versions of the License
+---------------------------
+
+10.1. New Versions
+
+Mozilla Foundation is the license steward. Except as provided in Section
+10.3, no one other than the license steward has the right to modify or
+publish new versions of this License. Each version will be given a
+distinguishing version number.
+
+10.2. Effect of New Versions
+
+You may distribute the Covered Software under the terms of the version
+of the License under which You originally received the Covered Software,
+or under the terms of any subsequent version published by the license
+steward.
+
+10.3. Modified Versions
+
+If you create software not governed by this License, and you want to
+create a new license for such software, you may create and use a
+modified version of this License if you rename the license and remove
+any references to the name of the license steward (except to note that
+such modified license differs from this License).
+
+10.4. Distributing Source Code Form that is Incompatible With Secondary
+Licenses
+
+If You choose to distribute Source Code Form that is Incompatible With
+Secondary Licenses under the terms of this version of the License, the
+notice described in Exhibit B of this License must be attached.
+
+Exhibit A - Source Code Form License Notice
+-------------------------------------------
+
+  This Source Code Form is subject to the terms of the Mozilla Public
+  License, v. 2.0. If a copy of the MPL was not distributed with this
+  file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+If it is not possible or desirable to put the notice in a particular
+file, then You may include the notice in a location (such as a LICENSE
+file in a relevant directory) where a recipient would be likely to look
+for such a notice.
+
+You may add additional accurate notices of copyright ownership.
+
+Exhibit B - "Incompatible With Secondary Licenses" Notice
+---------------------------------------------------------
+
+  This Source Code Form is "Incompatible With Secondary Licenses", as
+  defined by the Mozilla Public License, v. 2.0.
+
+----
+Alternatively, the contents of this file may be used under the terms of
+the GNU Lesser General Public License Version 2.1 or later (the "LGPL"),
+in which case the provisions of the LGPL are applicable instead of those
+above. If you wish to allow use of your version of this file only under
+the terms of the LGPL, and not to allow others to use your version of
+this file under the terms of the MPL, indicate your decision by deleting
+the provisions above and replace them with the notice and other
+provisions required by the LGPL. If you do not delete the provisions
+above, a recipient may use your version of this file under the terms of
+either the MPL or the LGPL.
+
+[[GSING00023]][[installation-files-for-glassfish-server-5.0]]
+
+=== Installation Files for {productName} {product-majorVersion}
+
+The following topics are addressed here:
+
+* xref:#glassfish-server-download-locations[{productName} Download Locations]
+* xref:#glassfish-server-installation-methods[{productName} Installation Methods]
+* xref:#choosing-an-installation-method[Choosing an Installation Method]
+* xref:#glassfish-server-zip-files[{productName} ZIP Files]
+
+[[glassfish-server-download-locations]]
+
+==== {productName} Download Locations
+
+Installation files for {productName} {product-majorVersion} are
+available by download from the
+https://glassfish.org/download.html[{productName} Downloads]
+page.
+
+The Jakarta EE specifications are available from
+https://jakarta.ee/specifications/[Jakarta EE specifications page]
+and are not described in this document.
+
+[[glassfish-server-installation-methods]]
+
+==== {productName} Installation Methods
+
+xref:#ghtqe[Table 1-1] lists the various {productName} installation methods. The table also provides links to
+installation instructions for each method.
+
+
+[NOTE]
+====
+Before performing any {productName} installation, ensure that your
+environment adheres to the JDK guidelines in
+"xref:release-notes.adoc#paths-and-environment-settings-for-the-jdk-software[Paths and Environment Settings for the JDK Software]"
+in {productName} Release Notes.
+====
+
+
+[[ghtqe]]
+
+
+Table 1-1 {productName} {product-majorVersion} Installation Methods
+
+[width="100%",cols="39%,61%",options="header",]
+|===
+|Installation Method |Installation Instructions
+|Multi-platform ZIP file |xref:#installing-glassfish-server-from-a-zip-file[Installing {productName} From a ZIP File].
+|===
+
+
+Each of the installation methods listed in xref:#ghtqe[Table 1-1] also
+let you choose between installing the Full Platform or the Web Profile.
+These two distributions are explained in the next section.
+
+[[choosing-an-installation-method]]
+
+==== Choosing an Installation Method
+
+There are two general sets of questions you should consider when
+deciding which {productName} {product-majorVersion} installation method to use.
+
+* xref:#zip-package[ZIP Package]
+* xref:#full-platform-or-web-profile-distribution[Full Platform or Web Profile Distribution]
+
+[[zip-package]]
+
+===== ZIP Package
+
+The relative features and strengths of the {productName} ZIP packages
+are listed below.
+
+* ZIP Package
+
+** Is simpler to install, but provides no configuration options during
+the installation
+** Any additional configurations must be performed manually, after installation
+** If uninstallation is desired, product must be uninstalled manually
+
+[[full-platform-or-web-profile-distribution]]
+
+===== Full Platform or Web Profile Distribution
+
+Each of the installation methods listed in xref:#ghtqe[Table 1-1] also
+let you choose to install either the {productName} Full Platform or
+Web Profile distribution. xref:#gkuap[Table 1-2] lists the features
+available in each of these two distributions. Note that some of these
+features are value-adds, and are not required by the Jakarta EE specification.
+
+[[gkuap]]
+
+Table 1-2 {productName} Full Profile and Web Profile Features
+
+[width="100%",cols="69%,16%,15%",options="header",]
+|===
+|Feature |Full Platform |Web Profile
+
+|Jakarta EE {jakartaee} Platform |X |X
+
+|Jakarta Security {jakarta-security-api-version} supporting OpenID Connect |X |X
+
+|Jakarta JSON Processing {jakarta-jsonp-api-version} |X |X
+
+|Jakarta JSON Binding (JSON-B) {jakarta-json-bind-api-version} |X |X
+
+|Jakarta Enterprise Beans (EJB) {jakarta-ejb-api-version} Lite (Support for Local Container only) |X |X
+
+|Transactions (JTA) {jakarta-transaction-api-version} |X |X
+
+|OSGi-based microkernel |X |X
+
+|Java Web Technologies (Servlet {jakarta-servlet-api-version}, JSP {jakarta-pages-api-version}, JSF {jakarta-faces-api-version}, JSTL {jstl-api-version}, EL {jakarta-el-api-version}) |X |X
+
+|Grizzly {grizzly-version}|X |X
+
+|Persistence {jakarta.persistence-api.version}, (EclipseLink {eclipselink-version}), JDBC Connection Pooling |X |X
+
+|JDBC 4.0 |X |X
+
+|Apache Derby {derby-version} |X |X
+
+|Web Administration Console and CLI |X |X
+
+|Rapid Redeployment (Maintain session state on application redeploy) |X |X
+
+|OMG CORBA APIs |X |X
+
+|Debugging Support for Other Languages 2.0 |X |X
+
+|Jakarta Annotations  {jakarta-annotation-api-version} |X |X
+
+|Jakarta Dependency Injection {jakarta-inject-api-version} |X |X
+
+|Managed Beans 2.1 |X |X
+
+|Interceptors {jakarta-interceptor-api-version} |X |X
+
+|Jakarta Contexts and Dependency Injection (CDI) {jakarta-cdi-api-version} |X |X
+
+|Jakarta Validation {jakarta-validation-api-version} |X |X
+
+|Jakarta RESTful Web Services  {jakarta-rest-api-version} (Jersey) |X |X
+
+|Jakarta Enterprise Beans (EJB) {jakarta-ejb-api-version} Full API (Support for Remote Container) |X |-
+
+|Jakarta Connectors {jakarta.resource-api.version} |X |-
+
+|Jakarta XML Web Services (JAX-WS) {jakarta.xml.ws-api.version} |X |-
+
+|Jakarta XML Binding (JAXB) {jakarta-jaxb-impl-version} |X |-
+
+|Jakarta Enterprise Web Services 2.0 |X |-
+
+|Jakarta Web Services Metadata 3.0 |X |-
+
+|Jakarta Messaging (JMS) {jakarta-messaging-api-version} |X |-
+
+|Jakarta Mail {jakarta-mail-api-version} |X |-
+
+|JACC {jakarta-authorization-api-version} |X |-
+
+|Java Authentication Service Provider Interface for Containers {jakarta-authentication-api-version} |X |-
+
+|Jakarta EE Application Deployment 1.2 |X |-
+
+|CORBA {glassfish-corba-version} |X a|*
+
+|Metro |X |-
+|===
+
+
+* The Full Jakarta EE Platform contains the complete CORBA package. The OMG
+CORBA v3.0 APIs are available in the Jakarta EE Web Profile.
+
+** Transaction propagation not supported.
+
+[[glassfish-server-zip-files]]
+
+==== {productName} ZIP Files
+
+The {productName} {product-majorVersion} multi-platform ZIP files
+are compatible with Linux, Mac OS, UNIX, and Windows operating
+
+systems. See xref:#glassfish-server-download-locations[{productName} Download Locations] for a list
+of download locations.
+
+xref:#gkbac[Table 1-3] lists the available ZIP file downloads.
+
+[[gkbac]]
+
+Table 1-3 {productName} Downloadable ZIP Files
+
+[width="100%",cols="31%,69%",options="header",]
+|===
+|ZIP File |Description
+a|
+[source]
+----
+glassfish-7.0.0.zip
+----
+|Full Platform distribution of {productName}
+
+a|
+[source]
+----
+glassfish-7.0.0-web.zip
+----
+
+|Web Profile distribution {productName}
+|===
+
+
+[[installing-glassfish-server-from-a-zip-file]]
+
+=== Installing {productName} From a ZIP File
+
+This section describes how to install {productName} {product-majorVersion} using the multi-platform ZIP file. {productName} is
+installed by unzipping the file in the installation directory of your
+choice.
+
+
+[NOTE]
+====
+It is not possible to specify any {productName} configuration options
+during a ZIP file installation. Any configuration changes, such as
+creating domains, clusters, and server instances, must be made manually
+after installation.
+====
+
+
+[[to-install-glassfish-server-using-the-zip-file]]
+
+==== To Install {productName} Using the ZIP File
+
+Before You Begin
+
+Ensure that your system meets the requirements listed in
+"xref:release-notes.adoc#hardware-and-software-requirements[Hardware and Software Requirements]"
+in {productName} Release Notes.
+
+Also see "xref:release-notes.adoc#GSRLN00253[Known Issues]" in {productName} Release Notes for known issues related to installation.
+
+1. Download the desired {productName} {product-majorVersion} ZIP file. +
+See xref:#glassfish-server-download-locations[{productName} Download Locations] for a list of
+download locations. See xref:#gkbac[Table 1-3] for a list of available ZIP files.
+
+2. Change to the directory where you downloaded the ZIP file.
+
+3. Unzip the file.
+* Linux, and Mac OS X systems:
++
+[source]
+----
+unzip zip-file-name
+----
+zip-file-name is the name of the file that you downloaded.
++
+For example:
++
+[source]
+----
+glassfish-7.0.0.zip
+----
+* Windows systems:
++
+Unzip using your favorite file compression utility.
++
+{productName} {product-majorVersion} is extracted into a new `glassfish{product-majorVersion}` directory
+under your current directory. This `glassfish{product-majorVersion}` directory is referred to
+throughout the {productName} documentation set as as-install-parent.
+
+4. Start {productName} using the instructions in the
+xref:quick-start-guide.adoc#GSQSG[{productName} Quick Start Guide].
++
+The guide explains how to perform basic tasks such as starting the
+server, accessing the Administration Console, and deploying a sample application.
+

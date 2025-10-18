@@ -1,0 +1,86 @@
+type=page
+status=published
+title=list-admin-objects
+next=list-application-refs.html
+prev=list.html
+~~~~~~
+
+= list-admin-objects
+
+[[list-admin-objects]]
+
+== list-admin-objects
+
+Gets all the administered objects
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-admin-objects [--help]
+[target]
+----
+
+=== Description
+
+The `list-admin-objects` subcommand lists all the administered objects.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  The target for which administered objects are to be listed. Valid
+  values are as follows:
+
+  `server`;;
+    Lists the administered objects on the default server instance. This
+    is the default value.
+  configuration-name;;
+    Lists the administered objects in the specified configuration.
+  cluster-name;;
+    Lists the administered objects on all server instances in the
+    specified cluster.
+  instance-name;;
+    Lists the administered objects on a specified server instance.
+
+=== Examples
+
+[[sthref1297]]
+
+==== Example 1   Listing Administered Objects
+
+This example lists all the administered objects.
+
+[source]
+----
+asadmin> list-admin-objects
+jms/samplequeue
+jms/anotherqueue
+Command list-admin-objects executed successfully
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-admin-object.adoc#create-admin-object[`create-admin-object`(1)],
+xref:delete-admin-object.adoc#delete-admin-object[`delete-admin-object`(1)]
+
+

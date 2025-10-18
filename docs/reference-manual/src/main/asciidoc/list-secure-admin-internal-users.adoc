@@ -1,0 +1,101 @@
+type=page
+status=published
+title=list-secure-admin-internal-users
+next=list-secure-admin-principals.html
+prev=list-resource-refs.html
+~~~~~~
+
+= list-secure-admin-internal-users
+
+[[list-secure-admin-internal-users]]
+
+== list-secure-admin-internal-users
+
+Lists the user names that the {productName} DAS and instances use to
+authenticate with each other and to authorize admin operations.
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-secure-admin-internal-users [--help]
+[--long={false|true}]
+[--output output]
+[--header={false|true}]
+[name]
+----
+
+=== Description
+
+The `list-secure-admin-internal-users` subcommand lists the user names
+that the {productName} DAS and instances use to authenticate with
+each other and to authorize admin operations.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--long`::
+`-l`::
+  Displays detailed information about each internal user. The default
+  value is `false.`
+`--output`::
+`-o`::
+  Displays specific details about each internal user. Use a
+  comma-separated list to specify the details you want to display and
+  their order. The values are case-insensitive.
+  Possible values are as follows:
+
+  `username`;;
+    Displays the user name for the internal user.
+  `password-alias`;;
+    Displays the password alias for the internal user.
+
+`--header`::
+`-h`::
+  Specifies whether column headings are displayed when the `--long`
+  option is used. The default value is `true`. To suppress the headings,
+  set the `--header` option to `false`.
+
+=== Operands
+
+name::
+  The user name for the internal user for which you want to display
+  details.
+
+=== Examples
+
+[[sthref1792]]
+
+==== Example 1   Listing the User Name for Secure Admin
+
+This example lists the user names that the {productName} DAS and
+instances use to authenticate with each other and to authorize admin
+operations.
+
+[source]
+----
+asadmin> list-secure-admin-internal-users
+
+Command list-secure-admin-internal-users executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:enable-secure-admin.adoc#enable-secure-admin[`enable-secure-admin`(1)],
+xref:enable-secure-admin-internal-user.adoc#enable-secure-admin-internal-user[`enable-secure-admin-internal-user`(1)]
+
+

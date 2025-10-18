@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE project [
+<!--
+
+    Copyright (c) 2017, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<!ENTITY commonBuild SYSTEM "./config/common.xml">
+]>
+
+<project name="deployment" default="all" basedir=".">
+  &commonBuild;
+
+    <target name="private-all">
+        <run-deployment-test path="war" target="private-all" build="${build}/war" />
+        <run-deployment-test path="ear" target="private-all" build="${build}/ear" />
+        <run-deployment-test path="dol" target="private-all" build="${build}/dol" />
+        <run-deployment-test path="ejb30" target="private-all" build="${build}/ejb30" />
+        <run-deployment-test path="ejb31" target="private-all" build="${build}/ejb31" />
+        <run-deployment-test path="descriptor_free_zone" target="private-all" build="${build}/descriptor_free_zone" />
+        <run-deployment-test path="directorydeploy" target="private-all" build="${build}/directorydeploy" />
+        <run-deployment-test path="versioning" target="private-all" build="${build}/versioning" />
+        <run-deployment-test path="osgi" target="private-all" build="${build}/osgi" />
+        <run-deployment-test path="webservices" target="private-all" build="${build}/webservices" />
+        <run-deployment-test path="javaee8" target="private-all" build="${build}/javaee8" />
+    </target>
+
+    <target name="clobber" depends="clean">
+        <delete file="${basedir}/tests-results.xml" />
+        <delete file="${basedir}/results.html" />
+        <delete file="${basedir}/client.log" />
+        <delete file="${annotation.report.dir}" />
+    </target>
+
+    <macrodef name="run-deployment-test" xmlns:if="ant:if" xmlns:unless="ant:unless">
+        <attribute name="path" />
+        <attribute name="target" />
+        <attribute name="build" />
+
+        <sequential>
+            <local name="do-run-test" />
+            <condition property="do-run-test" else="false">
+                <or>
+                    <equals arg1="${env.deployment}" arg2="@{path}" />
+                    <not>
+                        <isset property="env.deployment" />
+                    </not>
+                </or>
+            </condition>
+
+            <sequential if:true="${do-run-test}">
+                <local name="absolute.path" />
+                <property name="absolute.path" location="@{path}" />
+                <echo message="${line.separator} ${line.separator}" />
+                <echo message=" **************************************************" />
+                <echo message=" * Running @{path} " />
+                <echo message=" * Path: ${absolute.path} " />
+                <echo message=" * Build @{build} " />
+                <echo message=" * deployment: ${env.deployment} " />
+                <echo message=" **************************************************" />
+                <echo message="${line.separator} ${line.separator}" />
+                <ant dir="@{path}" target="@{target}">
+                    <property name="build" value="@{build}" />
+                </ant>
+            </sequential>
+        </sequential>
+    </macrodef>
+</project>

@@ -1,0 +1,81 @@
+type=page
+status=published
+title=delete-config
+next=delete-connector-connection-pool.html
+prev=delete-cluster.html
+~~~~~~
+
+= delete-config
+
+[[delete-config]]
+
+== delete-config
+
+Deletes an existing named configuration
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] delete-config [--help]
+configuration-name
+----
+
+=== Description
+
+The `delete-config` subcommand deletes an existing named configuration
+from the configuration of the domain administration server (DAS). You
+can delete a configuration only if no {productName} instances or
+clusters refer to the configuration. A standalone configuration is
+automatically deleted when the instance or cluster that refers to it is
+deleted. You cannot delete the `default-config` configuration that is
+copied to create standalone configurations.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+configuration-name::
+  The name of the configuration that you are deleting.
+
+=== Examples
+
+[[sthref622]]
+
+==== Example 1   Deleting a Named Configuration
+
+This example deletes the named configuration `pmdconfig`.
+
+[source]
+----
+asadmin> delete-config pmdconfig
+
+Command delete-config executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:copy-config.adoc#copy-config[`copy-config`(1)],
+xref:list-configs.adoc#list-configs[`list-configs`(1)]
+
+xref:configuration.adoc#configuration[`configuration`(5ASC)]
+
+

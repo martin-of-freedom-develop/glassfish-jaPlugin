@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2021, 2024 Contributors to Eclipse Foundation.
+    Copyright (c) 1997, 2022 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.extras</groupId>
+        <artifactId>embedded</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>glassfish-embedded-web</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Embedded GlassFish Web</name>
+
+    <properties>
+        <artifact-collection.directory>${project.build.directory}/jars</artifact-collection.directory>
+        <rar.directory>${project.build.directory}/rars</rar.directory>
+    </properties>
+
+    <dependencies>
+
+        <!-- Embedded Web features -->
+        <dependency>
+            <groupId>org.glassfish.main.featuresets</groupId>
+            <artifactId>embedded-web</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.github.mwiede</groupId>
+                    <artifactId>jsch</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <defaultGoal>install</defaultGoal>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <!-- This is required for hk2-locator - it will inspect all classes and detect services -->
+                    <execution>
+                        <id>unpack-jar-dependencies</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${projecty.build.outputDirectory}</outputDirectory>
+                            <includeScope>compile</includeScope>
+                            <includeScope>runtime</includeScope>
+                            <includeTypes>jar,glassfish-jar</includeTypes>
+                            <includes>**/*.class</includes>
+                            <excludes>module-info.class,META-INF/versions/*/module-info.class</excludes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unzip-dependencies-with-jars</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${artifact-collection.directory}</outputDirectory>
+                            <includeScope>compile</includeScope>
+                            <includeScope>runtime</includeScope>
+                            <includeTypes>zip</includeTypes>
+                            <excludeArtifactIds>derby</excludeArtifactIds>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unzip-derby</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <outputDirectory>${artifact-collection.directory}/javadb</outputDirectory>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includeTypes>zip</includeTypes>
+                            <includeArtifactIds>derby</includeArtifactIds>
+                            <includes>**/lib/**,**/bin/**</includes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jdbcra-cp.rar</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-cp.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <outputDirectory>${rar.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbcra-ds.rar</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-ds.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <outputDirectory>${rar.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbcra-dm.rar</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-dm.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <outputDirectory>${rar.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbcra-xa.rar</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-xa.xml</descriptor>
+                            </descriptors>
+                            <attach>false</attach>
+                            <outputDirectory>${rar.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>glassfish-embedded-web.jar</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/package.xml</descriptor>
+                            </descriptors>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <attach>true</attach>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <archive>
+                                <manifestEntries>
+                                    <Multi-Release>true</Multi-Release>
+                                    <Bundle-SymbolicName>org.glassfish.main.embedded.web</Bundle-SymbolicName>
+                                    <Main-Class>org.glassfish.runnablejar.UberMain</Main-Class>
+                                    <Add-Opens>java.base/java.lang java.base/java.io java.base/java.util java.base/sun.nio.fs java.base/sun.net.www.protocol.jrt java.naming/javax.naming.spi java.rmi/sun.rmi.transport jdk.management/com.sun.management.internal java.base/jdk.internal.vm.annotation</Add-Opens>
+                                    <Add-Exports>java.naming/com.sun.jndi.ldap java.base/jdk.internal.vm.annotation</Add-Exports>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.glassfish.hk2</groupId>
+                <artifactId>hk2-inhabitant-generator</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-inhabitants</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>generate-inhabitants</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <!-- generate empty javadoc jar -->
+            <id>oss-release</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create-empty-javadoc-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classesDirectory>${project.build.directory}/javadoc</classesDirectory>
+                                    <classifier>javadoc</classifier>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>

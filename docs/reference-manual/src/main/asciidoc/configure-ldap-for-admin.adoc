@@ -1,0 +1,71 @@
+type=page
+status=published
+title=configure-ldap-for-admin
+next=configure-managed-jobs.html
+prev=configure-lb-weight.html
+~~~~~~
+
+= configure-ldap-for-admin
+
+[[configure-ldap-for-admin]]
+
+== configure-ldap-for-admin
+
+Configures the authentication realm named admin-realm for the given LDAP
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] configure-ldap-for-admin [--help]
+----
+
+=== Description
+
+The `configure-ldap-for-admin` subcommand configures the authentication
+realm named `admin-realm` for the given LDAP. The
+`configure-ldap-for-admin` subcommand is interactive. The subcommand
+prompts the user for the `basedn` and `ldap-group` options.
+
+This command is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Examples
+
+[[sthref97]]
+
+==== Example 1    Configuring the LDAP Authentication Realm
+
+[source]
+----
+asadmin> configure-ldap-for-admin
+Enter the value for the basedn option>
+Enter the value for the ldap-group option>
+The LDAP Auth Realm admin-realm was configured correctly
+in admin server's configuration.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:change-admin-password.adoc#change-admin-password[`change-admin-password`(1)],
+xref:create-auth-realm.adoc#create-auth-realm[`create-auth-realm`(1)]xref:create-auth-realm.adoc#create-auth-realm[`create-auth-realm`(1)],
+xref:list-auth-realms.adoc#list-auth-realms[`list-auth-realms`(1)]
+
+

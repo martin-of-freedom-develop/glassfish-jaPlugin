@@ -1,0 +1,87 @@
+type=page
+status=published
+title=list-threadpools
+next=list-timers.html
+prev=list-system-properties.html
+~~~~~~
+
+= list-threadpools
+
+[[list-threadpools]]
+
+== list-threadpools
+
+Lists all the thread pools
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-threadpools [--help]
+target
+----
+
+=== Description
+
+The `list-threadpools` subcommand lists the {productName} thread pools.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  This operand specifies the target for which you are listing thread
+  pools. This operand is required.
+  Valid values are as follows:
+
+  `server`;;
+    Lists the thread pools for the default {productName} instance
+    `server`.
+  configuration-name;;
+    Lists the thread pools for the named configuration.
+  cluster-name;;
+    Lists the thread pools for every instance in the cluster.
+  instance-name;;
+    Lists the thread pools for a particular instance.
+
+=== Examples
+
+[[sthref1831]]
+
+==== Example 1   Listing Thread Pools
+
+This example lists the current thread pools for the default instance `server`.
+
+[source]
+----
+asadmin> list-threadpools server
+admin-thread-pool
+http-thread-pool
+thread-pool-1
+Command list-threadpools executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-threadpool.adoc#create-threadpool[`create-threadpool`(1)],
+xref:delete-threadpool.adoc#delete-threadpool[`delete-threadpool`(1)]
+
+

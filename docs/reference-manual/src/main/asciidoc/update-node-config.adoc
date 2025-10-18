@@ -1,0 +1,109 @@
+type=page
+status=published
+title=update-node-config
+next=update-node-ssh.html
+prev=update-file-user.html
+~~~~~~
+
+= update-node-config
+
+[[update-node-config]]
+
+== update-node-config
+
+Updates the configuration data of a node
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] update-node-config [--help]
+[--nodehost node-host]
+[--installdir as-install-parent] [--nodedir node-dir]
+node-name
+----
+
+=== Description
+
+The `update-node-config` subcommand updates the configuration data of a node.
+
+This subcommand can update any node, regardless of whether the node is
+enabled for remote communication. If a node that is enabled for remote
+communication is updated, the node is not enabled for remote
+communication after the update.
+
+Options of this subcommand specify the new values of the node's
+configuration data. The default for these options is to leave the
+existing value unchanged.
+
+This subcommand does not require the secure shell (SSH) to be configured to update
+the node. You may run this subcommand from any host that can contact the DAS.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--nodehost`::
+  The name of the host that the node is to represent after the node is
+  updated.
+`--installdir`::
+  The full path to the parent of the base installation directory of the
+  {productName} software on the host, for example,
+  `/export/glassfish7`.
+`--nodedir`::
+  The path to the directory that is to contain {productName}
+  instances that are created on the node. If a relative path is
+  specified, the path is relative to the as-install directory, where
+  as-install is the base installation directory of the {productName}
+  software on the host.
+
+=== Operands
+
+node-name::
+  The name of the node to update. The node must exist. Otherwise, an
+  error occurs.
+
+=== Examples
+
+[[sthref2287]]
+
+==== Example 1   Updating the Host That a Node Represents
+
+This example updates the host that the node `sj04` represents to
+`hsj04`.
+
+[source]
+----
+asadmin> update-node-config --nodehost hsj04 sj04
+Command update-node-config executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-node-config.adoc#create-node-config[`create-node-config`(1)],
+xref:create-node-ssh.adoc#create-node-ssh[`create-node-ssh`(1)],
+xref:delete-node-config.adoc#delete-node-config[`delete-node-config`(1)],
+xref:delete-node-ssh.adoc#delete-node-ssh[`delete-node-ssh`(1)],
+xref:install-node.adoc#install-node[`install-node`(1)],
+xref:install-node-ssh.adoc#install-node-ssh[`install-node-ssh`(1)],
+xref:list-nodes.adoc#list-nodes[`list-nodes`(1)],
+xref:uninstall-node.adoc#uninstall-node[`uninstall-node`(1)],
+xref:uninstall-node-ssh.adoc#uninstall-node-ssh[`uninstall-node-ssh`(1)],
+xref:update-node-ssh.adoc#update-node-ssh[`update-node-ssh`(1)]
+
+

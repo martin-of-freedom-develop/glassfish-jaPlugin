@@ -1,0 +1,148 @@
+type=page
+status=published
+title=list-nodes
+next=list-nodes-config.html
+prev=list-network-listeners.html
+~~~~~~
+
+= list-nodes
+
+[[list-nodes]]
+
+== list-nodes
+
+Lists all {productName} nodes in a domain
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-nodes [--help]
+[--long={false|true}]
+----
+
+=== Description
+
+The `list-nodes` subcommand lists all {productName} nodes in a
+domain.
+
+By default, the subcommand displays the following information for each
+node that is listed:
+
+* The name of the node
+
+* The type of the node, which is one of the following types:::
+`CONFIG`::
+  The node does not support remote communication.
+`SSH`::
+  The node supports communication over secure shell (SSH).
+
+* The name of the host that the node represents
+
+The `--long` option of the subcommand specifies whether the nodes are
+listed in long format. In long format, the following additional
+information about each node is displayed:
+
+* The path to the parent of the base installation directory of
+{productName} on the host that the node represents
+
+* A comma-separated list of the names of the {productName} instances
+that reside on the node
+
+If the `--terse` option of the
+xref:asadmin.adoc#asadmin[`asadmin`(1M)] utility is `true` and the
+`--long` option of the subcommand is `false`, the subcommand lists only
+the name of each node.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--long`::
+`-l`::
+  Specifies whether the nodes are listed in long format. +
+  Possible values are as follows:
+
+  `true`;;
+    The nodes are listed in long format.
+  `false`;;
+    The nodes are listed in short format (default).
+
+=== Examples
+
+[[sthref1704]]
+
+==== Example 1   Listing {productName} Nodes
+
+This example displays the name, type, and host for all {productName}
+nodes in the domain `domain1`.
+
+[source]
+----
+asadmin> list-nodes
+localhost-domain1  CONFIG  localhost
+sj02  SSH  sj02.example.com
+sj01  SSH  sj01.example.com
+devnode  CONFIG  localhost
+Command list-nodes executed successfully.
+----
+
+[[sthref1705]]
+
+==== Example 2   Listing Only the Names of {productName} Nodes
+
+This example uses the `--terse` option of the `asadmin` utility to list
+only the names of the {productName} nodes in the domain `domain1`.
+
+[source]
+----
+asadmin> list-nodes --terse=true
+localhost-domain1
+sj02
+sj01
+devnode
+----
+
+[[sthref1706]]
+
+==== Example 3   Listing {productName} Nodes in Long Format
+
+This example lists the {productName} nodes in the domain `domain1`
+in long format.
+
+[source]
+----
+asadmin> list-nodes --long=true
+NODE NAME           TYPE     NODE HOST          INSTALL DIRECTORY     REFERENCED BY
+localhost-domain1   CONFIG   localhost          /export/glassfish7
+sj02                SSH      sj02.example.com   /export/glassfish7    pmd-i2, yml-i2
+sj01                SSH      sj01.example.com   /export/glassfish7    pmd-i1, yml-i1
+devnode             CONFIG   localhost          /export/glassfish7    pmdsa1
+Command list-nodes executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-node-config.adoc#create-node-config[`create-node-config`(1)],
+xref:create-node-ssh.adoc#create-node-ssh[`create-node-ssh`(1)],
+xref:delete-node-config.adoc#delete-node-config[`delete-node-config`(1)],
+xref:delete-node-ssh.adoc#delete-node-ssh[`delete-node-ssh`(1)],
+xref:list-nodes-config.adoc#list-nodes-config[`list-nodes-config`(1)],
+xref:list-nodes-ssh.adoc#list-nodes-ssh[`list-nodes-ssh`(1)]
+
+

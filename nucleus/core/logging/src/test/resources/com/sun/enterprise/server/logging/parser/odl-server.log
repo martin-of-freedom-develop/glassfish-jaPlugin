@@ -1,0 +1,50 @@
+[2022-06-29T19:55:57.907+0200] [glassfish 7.0] [INFO] [NCLS-LOGGING-00009] [jakarta.enterprise.logging] [tid: _ThreadID=44 _ThreadName=RunLevelControllerThread-1656525357794] [timeMillis: 1656525357907] [levelValue: 800] [[
+Running GlassFish Version: Eclipse GlassFish  7.0.0  (build master-b736-g2cdfe0f 2022-06-29T19:33:55+0200)]]
+
+[2022-06-29T19:55:57.910+0200] [glassfish 7.0] [INFO] [NCLS-LOGGING-00010] [jakarta.enterprise.logging] [tid: _ThreadID=44 _ThreadName=RunLevelControllerThread-1656525357794] [timeMillis: 1656525357910] [levelValue: 800] [[
+Server log file is using Formatter class: com.sun.enterprise.server.logging.ODLLogFormatter]]
+
+[2022-06-29T19:55:58.166+0200] [glassfish 7.0] [INFO] [NCLS-SECURITY-01115] [jakarta.enterprise.system.core.security] [tid: _ThreadID=43 _ThreadName=RunLevelControllerThread-1656525357793] [timeMillis: 1656525358166] [levelValue: 800] [[
+Realm [admin-realm] of classtype [com.sun.enterprise.security.auth.realm.file.FileRealm] successfully created.]]
+
+[2022-06-29T19:55:58.169+0200] [glassfish 7.0] [INFO] [NCLS-SECURITY-01115] [jakarta.enterprise.system.core.security] [tid: _ThreadID=43 _ThreadName=RunLevelControllerThread-1656525357793] [timeMillis: 1656525358169] [levelValue: 800] [[
+Realm [file] of classtype [com.sun.enterprise.security.auth.realm.file.FileRealm] successfully created.]]
+
+[2022-06-29T19:55:58.182+0200] [glassfish 7.0] [INFO] [NCLS-SECURITY-01115] [jakarta.enterprise.system.core.security] [tid: _ThreadID=43 _ThreadName=RunLevelControllerThread-1656525357793] [timeMillis: 1656525358182] [levelValue: 800] [[
+Realm [certificate] of classtype [com.sun.enterprise.security.auth.realm.certificate.CertificateRealm] successfully created.]]
+
+[2022-06-29T19:55:58.290+0200] [glassfish 7.0] [INFO] [] [org.glassfish.ha.store.spi.BackingStoreFactoryRegistry] [tid: _ThreadID=45 _ThreadName=RunLevelControllerThread-1656525357799] [timeMillis: 1656525358290] [levelValue: 800] [[
+Registered org.glassfish.ha.store.adapter.cache.ShoalBackingStoreProxy for persistence-type = replicated in BackingStoreFactoryRegistry]]
+
+[2022-06-29T19:55:58.325+0200] [glassfish 7.0] [INFO] [] [org.hibernate.validator.internal.util.Version] [tid: _ThreadID=46 _ThreadName=RunLevelControllerThread-1656525357799] [timeMillis: 1656525358325] [levelValue: 800] [[
+HV000001: Hibernate Validator 8.0.0.Alpha3]]
+
+[2022-06-29T19:55:58.416+0200] [glassfish 7.0] [INFO] [SEC-SVCS-00100] [jakarta.enterprise.security.services] [tid: _ThreadID=44 _ThreadName=RunLevelControllerThread-1656525357794] [timeMillis: 1656525358416] [levelValue: 800] [[
+Authorization Service has successfully initialized.]]
+
+[2022-06-29T19:55:58.736+0200] [glassfish 7.0] [INFO] [NCLS-CORE-00087] [jakarta.enterprise.system.core] [tid: _ThreadID=43 _ThreadName=RunLevelControllerThread-1656525357793] [timeMillis: 1656525358736] [levelValue: 800] [[
+Grizzly Framework 4.0.0 started in: 71ms - bound to [/0.0.0.0:8080]]]
+
+[2022-06-29T19:55:58.798993+02:00] [GlassFish 7.0] [INFO] [NCLS-CORE-00087] [jakarta.enterprise.system.core] [tid: _ThreadID=43 _ThreadName=RunLevelControllerThread-1656525357793] [levelValue: 800] [[
+Grizzly Framework 4.0.0 started in: 1ms - bound to [/0.0.0.0:8181]]]
+
+[2022-06-29T19:55:58.806+0200] [glassfish 7.0] [INFO] [NCLS-CORE-00087] [jakarta.enterprise.system.core] [tid: _ThreadID=43 _ThreadName=RunLevelControllerThread-1656525357793] [timeMillis: 1656525358806] [levelValue: 800] [[
+Grizzly Framework 4.0.0 started in: 1ms - bound to [/0.0.0.0:4848]]]
+
+[2022-06-29T19:55:58.828+0200] [glassfish 7.0] [INFO] [NCLS-CORE-00087] [jakarta.enterprise.system.core] [tid: _ThreadID=45 _ThreadName=RunLevelControllerThread-1656525357799] [timeMillis: 1656525358828] [levelValue: 800] [[
+Grizzly Framework 4.0.0 started in: 0ms - bound to [/0.0.0.0:3700]]]
+
+[2022-06-29T19:55:58.892+0200] [glassfish 7.0] [INFO] [NCLS-CORE-00017] [jakarta.enterprise.system.core] [tid: _ThreadID=1 _ThreadName=main] [timeMillis: 1656525358892] [levelValue: 800] [[
+Eclipse GlassFish  7.0.0  (webappCL-b736-g2cdfe0f 2022-06-29T19:33:55+0200) startup time : Felix (2,723ms), startup services(1,103ms), total(3,826ms)]]
+
+[2022-06-29T19:55:59.200+0200] [glassfish 7.0] [INFO] [NCLS-JMX-00005] [jakarta.enterprise.system.jmx] [tid: _ThreadID=87 _ThreadName=Thread-13] [timeMillis: 1656525359200] [levelValue: 800] [[
+JMXStartupService has started JMXConnector on JMXService URL service:jmx:rmi://dmatej-P7740:8686/jndi/rmi://dmatej-P7740:8686/jmxrmi]]
+
+[2022-06-29T19:55:59.273+0200] [glassfish 7.0] [INFO] [NCLS-CORE-00087] [jakarta.enterprise.system.core] [tid: _ThreadID=46 _ThreadName=RunLevelControllerThread-1656525357799] [timeMillis: 1656525359273] [levelValue: 800] [[
+Grizzly Framework 4.0.0 started in: 1ms - bound to [/0.0.0.0:7676]]]
+
+[2022-06-29T19:55:59.275+0200] [glassfish 7.0] [INFO] [NCLS-BOOTSTRAP-00027] [jakarta.enterprise.bootstrap] [tid: _ThreadID=1 _ThreadName=main] [timeMillis: 1656525359275] [levelValue: 800] [[
+Registered com.sun.enterprise.glassfish.bootstrap.osgi.EmbeddedOSGiGlassFishImpl@5d152bcd as OSGi service registration: org.apache.felix.framework.ServiceRegistrationImpl@43cb5f38.]]
+
+[2022-06-29T19:56:01.083+0200] [glassfish 7.0] [INFO] [NCLS-REST-00001] [jakarta.enterprise.admin.rest] [tid: _ThreadID=68 _ThreadName=admin-listener(2)] [timeMillis: 1656525361083] [levelValue: 800] [[
+Listening to REST requests at context: /command/domain.]]

@@ -1,0 +1,115 @@
+type=page
+status=published
+title=stop-cluster
+next=stop-database.html
+prev=start-local-instance.html
+~~~~~~
+
+= stop-cluster
+
+[[stop-cluster]]
+
+== stop-cluster
+
+Stops a {productName} cluster
+
+=== Synopsis
+
+[source]
+----
+asadmin stop-cluster
+[--help|-?]
+[--kill[=<kill(default:false)>]]
+[--timeout <timeout>]
+clustername
+----
+
+=== Description
+
+The `stop-cluster` subcommand stops a {productName} cluster by
+stopping all running {productName} instances in the cluster.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--verbose`::
+  Specifies whether additional progress messages about the status of
+  instances in the cluster are displayed while the cluster is being stopped. +
+  Possible values are as follows:
+
+  `true`;;
+    Additional progress messages about the status of instances in the
+    cluster are displayed.
+  `false`;;
+    No messages about the status of instances in the cluster are
+    displayed.
+
+`--kill`::
+  Specifies whether each instance in the cluster is killed by using
+  functionality of the operating system to terminate the instance
+  process. +
+  Possible values are as follows:
+
+  `false`;;
+    No instances are killed. The subcommand uses functionality of the
+    Java platform to terminate each instance process (default).
+  `true`;;
+    Each instance is killed. The subcommand uses functionality of the
+    operating system to terminate each instance process.
+
+`--timeout`::
+  Specifies timeout in seconds to evaluate the expected result.
+  If the timeout is exceeded, the command fails - however it does
+  not mean it did not make any changes. The status of instances is
+  unknown in such case.
+
+=== Operands
+
+cluster-name::
+  The name of the cluster to stop.
+
+=== Examples
+
+[[sthref2155]]
+
+==== Example 1   Stopping a Cluster
+
+This example stops the cluster `pmdcluster`. Additional progress
+messages about the status of instances in the cluster are displayed
+while the cluster is being stopped.
+
+[source]
+----
+asadmin> stop-cluster --verbose pmdcluster
+stop-instance pmd-i-sj01
+stop-instance pmd-i-sj02
+
+The command stop-instance executed successfully for: pmd-i-sj01 pmd-i-sj02
+
+Command stop-cluster executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-cluster.adoc#create-cluster[`create-cluster`(1)],
+xref:delete-cluster.adoc#delete-cluster[`delete-cluster`(1)],
+xref:list-clusters.adoc#list-clusters[`list-clusters`(1)],
+xref:start-cluster.adoc#start-cluster[`start-cluster`(1)]
+
+

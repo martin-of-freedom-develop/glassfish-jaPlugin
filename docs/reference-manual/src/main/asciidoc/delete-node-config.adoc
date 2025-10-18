@@ -1,0 +1,110 @@
+type=page
+status=published
+title=delete-node-config
+next=delete-node-ssh.html
+prev=delete-network-listener.html
+~~~~~~
+
+= delete-node-config
+
+[[delete-node-config]]
+
+== delete-node-config
+
+Deletes a node that is not enabled for remote communication
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] delete-node-config [--help]
+node-name
+----
+
+=== Description
+
+The `delete-node-config` subcommand deletes a node that is not enabled
+for remote communication from the domain. This subcommand does not
+require the secure shell (SSH) to be configured.
+
+This subcommand can delete only a node that is not enabled for remote
+communication.
+The subcommand for deleting other types of nodes depends
+on the type of the node:
+
+* A node that is enabled for remote communication over SSH must be
+  deleted by using the
+  xref:delete-node-ssh.adoc#delete-node-ssh[`delete-node-ssh`(1)] subcommand.
+
+To determine whether a node is enabled for remote communication, use the
+xref:list-nodes.adoc#list-nodes[`list-nodes`(1)] subcommand.
+
+No {productName} instances must reside on the node that is being deleted.
+Otherwise, the subcommand fails. Before running this
+subcommand, delete any instances that reside on the node by using, for
+example, the xref:delete-instance.adoc#delete-instance[`delete-instance`(1)]
+subcommand or the
+xref:delete-local-instance.adoc#delete-local-instance[`delete-local-instance`(1)] subcommand.
+
+[NOTE]
+====
+The predefined node ``localhost-``domain cannot be deleted.
+====
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+node-name::
+  The name of the node to delete. The node must not be enabled for
+  communication over SSH. Otherwise, an error occurs.
+
+=== Examples
+
+[[sthref903]]
+
+==== Example 1   Deleting a Node That Is Not Enabled for Remote Communication
+
+This example deletes the node `sj03`, which is not enabled for remote
+communication.
+
+[source]
+----
+asadmin> delete-node-config sj03
+
+Command delete-node-config executed successfully.
+----
+
+=== Exit Status
+
+`0`::
+  command executed successfully
+`1`::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-node-config.adoc#create-node-config[`create-node-config`(1)],
+xref:delete-instance.adoc#delete-instance[`delete-instance`(1)],
+xref:delete-local-instance.adoc#delete-local-instance[`delete-local-instance`(1)],
+xref:delete-node-ssh.adoc#delete-node-ssh[`delete-node-ssh`(1)],
+xref:install-node.adoc#install-node[`install-node`(1)],
+xref:install-node-ssh.adoc#install-node-ssh[`install-node-ssh`(1)],
+xref:list-nodes.adoc#list-nodes[`list-nodes`(1)],
+xref:uninstall-node.adoc#uninstall-node[`uninstall-node`(1)],
+xref:uninstall-node-ssh.adoc#uninstall-node-ssh[`uninstall-node-ssh`(1)],
+xref:update-node-config.adoc#update-node-config[`update-node-config`(1)],
+xref:update-node-ssh.adoc#update-node-ssh[`update-node-ssh`(1)]
+
+

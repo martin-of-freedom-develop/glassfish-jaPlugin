@@ -1,0 +1,4 @@
+Bundle-SymbolicName: sahoo.rfc66.test7
+Bundle-ClassPath: WEB-INF/classes
+Import-Package: jakarta.servlet; jakarta.servlet.http; version=2.5
+Web-ContextPath: /NOTUSED

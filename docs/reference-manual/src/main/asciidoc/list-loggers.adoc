@@ -1,0 +1,79 @@
+type=page
+status=published
+title=list-loggers
+next=list-log-levels.html
+prev=list-log-attributes.html
+~~~~~~
+
+= list-loggers
+
+[[list-loggers]]
+
+== list-loggers
+
+Lists existing loggers
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-loggers [--help]
+----
+
+=== Description
+
+The `list-loggers` subcommand lists the existing {productName}
+loggers. Internal loggers are not listed. The `list-loggers` subcommand
+lists the logger name, subsystem, and description.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Examples
+
+[[sthref1642]]
+
+==== Example 1   Listing the Loggers
+
+This example lists the logger name, subsystem, and description for each
+logger. Some lines of output are omitted from this example for readability.
+
+[source]
+----
+asadmin> list-loggers
+Logger Name                                                   Subsystem              Logger Description
+jakarta.enterprise.admin.rest                                 REST                   Main REST Logger
+jakarta.enterprise.admin.rest.client                          REST                   REST Client Logger
+jakarta.enterprise.admin.rest.connector                       RSTCN                  REST Connector Logger
+jakarta.enterprise.bootstrap                                  BOOTSTRAP              Main bootstrap logger.
+jakarta.enterprise.cluster.gms                                CLSTR                  Group Management Service Adapter Logger
+...
+jakarta.mail                                                  MAIL                   Jakarta Mail Logger
+org.glassfish.naming                                          glassfish-naming       logger for GlassFish appserver naming
+
+Command list-loggers executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:list-log-levels.adoc#list-log-levels[`list-log-levels`(1)],
+xref:set-log-file-format.adoc#set-log-file-format[`set-log-file-format`(1)]
+
+

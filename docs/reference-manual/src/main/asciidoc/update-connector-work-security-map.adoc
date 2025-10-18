@@ -1,0 +1,96 @@
+type=page
+status=published
+title=update-connector-work-security-map
+next=update-file-user.html
+prev=update-connector-security-map.html
+~~~~~~
+
+= update-connector-work-security-map
+
+[[update-connector-work-security-map]]
+
+== update-connector-work-security-map
+
+Modifies a work security map for the specified resource adapter
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] update-connector-work-security-map [--help]
+--raname raname
+[--addprincipals eis-principal1=server-principal1[, eis-principal2=server-principal2]*]
+[--addgroups eis-group1=server-group1[, eis-group2=server-group2]*]
+[--removeprincipals eis-principal1[,eis-principal2]*]
+[--removegroups eis-group1[, eis-group2]*]
+mapname
+----
+
+=== Description
+
+The `update-connector-work-security-map` subcommand modifies a security
+map for the specified resource adapter.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--addgroups`::
+  Specifies a comma-separated list of EIS groups to be added. Use either
+  the `--addprincipals` option or the `--addgroups` option, but not
+  both.
+`--addprincipals`::
+  Specifies a comma-separated list of EIS-specific principals to be
+  added. Use either the `--addprincipals` option or the `--addgroups`
+  option, but not both.
+`--removegroups`::
+  Specifies a comma-separated list of EIS groups to be removed.
+`--removeprincipals`::
+  Specifies a comma-separated list of EIS-specific principals to be
+  removed.
+`--raname`::
+  Indicates the connector module name with which the work security map
+  is associated.
+
+=== Operands
+
+mapname::
+  The name of the work security map to be updated.
+
+=== Examples
+
+[[sthref2271]]
+
+==== Example 1   Updating a Connector Work Security Map
+
+This example updates `workSecurityMap2` by removing `eis-group-2`.
+
+[source]
+----
+asadmin> update-connector-work-security-map
+--raname my-resource-adapter --removegroups eis-group-2 workSecurityMap2
+Command update-connector-work-security-map executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-connector-work-security-map.adoc#create-connector-work-security-map[`create-connector-work-security-map`(1)],
+xref:delete-connector-work-security-map.adoc#delete-connector-work-security-map[`delete-connector-work-security-map`(1)],
+xref:list-connector-work-security-maps.adoc#list-connector-work-security-maps[`list-connector-work-security-maps`(1)]
+
+
