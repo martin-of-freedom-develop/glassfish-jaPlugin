@@ -1,0 +1,74 @@
+type=page
+status=published
+title=delete-http-redirect
+next=delete-iiop-listener.html
+prev=delete-http-listener.html
+~~~~~~
+
+= delete-http-redirect
+
+[[delete-http-redirect]]
+
+== delete-http-redirect
+
+Removes an HTTP redirect
+
+[[administering-concurrent-resources9]]
+
+=== Synopsis
+
+[source]
+----
+delete-http-redirect [--help]
+[--target target]
+protocol-name
+----
+
+=== Description
+
+The `delete-http-redirect` subcommand removes the specified HTTP
+redirect. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  Deletes the HTTP redirect only from the specified target. Valid values
+  are as follows:
+
+  `server`;;
+    Deletes the HTTP redirect from the default server instance. This is
+    the default value.
+  configuration-name;;
+    Deletes the HTTP redirect from the specified configuration.
+  cluster-name;;
+    Deletes the HTTP redirect from all server instances in the specified
+    cluster.
+  standalone-instance-name;;
+    Deletes the HTTP redirect from the specified standalone server
+    instance.
+
+=== Operands
+
+protocol-name::
+  The name of the associated protocol.
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-http-redirect.adoc#create-http-redirect[`create-http-redirect`(1)]
+
+

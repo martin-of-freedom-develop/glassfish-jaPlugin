@@ -1,0 +1,16 @@
+type=page
+status=published
+title=List of Figures
+next=lot.html
+prev=loe.html
+~~~~~~
+
+= List of Figures
+
+[[list-of-figures]]
+== List of Figures
+
+* xref:overview.adoc#fwfdj[1-1 Module-Based Assembly and Deployment]
+* xref:overview.adoc#fvyip[1-2 Application-Based Assembly and Deployment]
+
+

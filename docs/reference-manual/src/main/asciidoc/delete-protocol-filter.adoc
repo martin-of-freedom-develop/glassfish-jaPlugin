@@ -1,0 +1,90 @@
+type=page
+status=published
+title=delete-protocol-filter
+next=delete-protocol-finder.html
+prev=delete-protocol.html
+~~~~~~
+
+= delete-protocol-filter
+
+[[delete-protocol-filter]]
+
+== delete-protocol-filter
+
+Removes a protocol filter
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] delete-protocol-filter [--help]
+--protocol protocol-name
+[--target server]
+protocol-filter-name
+----
+
+=== Description
+
+The `delete-protocol-filter` subcommand removes the specified protocol
+filter. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--protocol-name`::
+  The name of the associated protocol.
+`--target`::
+  Deletes the protocol filter only from the specified target. Valid
+  values are as follows:
+
+  `server`;;
+    Deletes the protocol filter from the default server instance. This
+    is the default value.
+  configuration-name;;
+    Deletes the protocol filter from the specified configuration.
+  cluster-name;;
+    Deletes the protocol filter from all server instances in the
+    specified cluster.
+  standalone-instance-name;;
+    Deletes the protocol filter from the specified standalone server
+    instance.
+
+=== Operands
+
+protocol-filter-name::
+  The name of the protocol filter to be deleted.
+
+=== Examples
+
+[[sthref950]]
+
+==== Example 1   Deleting a Protocol Filter
+
+The following command deletes the protocol filter named `http1-filter`:
+
+[source]
+----
+asadmin> delete-protocol-filter --protocol http1 http1-filter
+Command delete-protocol-filter executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-protocol-filter.adoc#create-protocol-filter[`create-protocol-filter`(1)],
+xref:list-protocol-filters.adoc#list-protocol-filters[`list-protocol-filters`(1)]
+
+

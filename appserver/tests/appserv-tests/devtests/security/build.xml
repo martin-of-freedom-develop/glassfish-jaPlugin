@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright (c) 2013, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<!DOCTYPE project [
+<!ENTITY commonSetup SYSTEM "./../../config/properties.xml">
+<!ENTITY commonBuild SYSTEM "./../../config/common.xml">
+<!ENTITY reporting   SYSTEM "./report.xml">
+<!ENTITY run SYSTEM "./../../config/run.xml">
+]>
+
+<project name="security" default="usage" basedir=".">
+
+    &commonSetup;
+    &commonBuild;
+    &reporting;
+    &run;
+
+<property file="build.properties" />
+
+    <target name="all">
+        <delete>
+           <fileset dir="${env.APS_HOME}" includes="test_results*, security-gtest-results.xml"/>
+        </delete>
+        <delete>
+           <fileset dir="." includes="*.output"/>
+        </delete>
+        <record name="security.output" action="start" />
+
+        <run-security-test path="jmac" />
+        <run-security-test path="jaccmr8" />
+        <run-security-test path="jaccApi" />
+
+        <run-security-test path="uncovered-http-methods" />
+
+        <run-security-test path="authConf" />
+        <run-security-test path="negativeRealmPerApp" />
+        <run-security-test path="realmPerApp" />
+        <run-security-test path="jdbcrealm" />
+
+        <run-security-test path="sful" />
+        <run-security-test path="userWithAtSymbol" />
+        <run-security-test path="anyone" />
+        <run-security-test path="ejb-oneway-ssl" />
+        <run-security-test path="ejb-mutual-ssl" />
+        <run-security-test path="sameEjbName" />
+
+        <run-security-test path="wss" />
+
+        <run-security-test path="ciphertest" />
+        <run-security-test path="standalone" />
+
+        <record name="security.output" action="stop" />
+        <antcall target="report"/>
+    </target>
+
+    <target name="do-not-run">
+         <!--    <ant dir="simple-perf" target="all"/>-->                <!-- DISABLED: Not listed -->
+         <!--    <ant dir="weblogic-dd" target="all"/>-->                <!-- DISABLED: Failures -->
+         <!--    <ant dir="web-mutual-ssl" target="all"/>-->             <!-- DISABLED -->
+         <!--    <ant dir="cplogin" target="all"/>-->                    <!-- DISABLED -->
+         <!--    <ant dir="plogin" target="all"/>-->                     <!-- DISABLED -->
+         <!--    <ant dir="mdb" target="all"/>-->                        <!-- DISABLED: Does not run -->
+         <!--    <ant dir="timerStandalone" target="all"/>-->            <!-- DISABLED: Failure -->
+         <!--    <ant dir="pamrealm" target="all"/>-->                      <!-- DISABLED: Needs additional setup -->
+         <!--    <ant dir="cert-realm-custom-loginmodule" target="all"/>--> <!-- DISABLED: Failure  -->
+         <!--    DISABLED: Needs a running LDAP server
+        <ant dir="ldap/simpleweb" target="all" />
+        <ant dir="ldapRealmPerApp" target="all"/>
+        -->
+<!--    <ant dir="solarisRealm" target="all"/>-->                  <!-- DISABLED -->
+    </target>
+
+    <target name="ejb">
+        <ant dir="negativeRealmPerApp" target="all"/>
+        <ant dir="realmPerApp" target="all"/>
+        <ant dir="sful" target="all"/>
+    </target>
+
+   <target name="usage">
+        <echo>
+                Usage:
+                        ant all (Executes all security tests)
+                        ant ejb (Executes all ejb-related security tests
+                        ant web (Executes the web tests TBD)
+        </echo>
+    </target>
+
+    <macrodef name="run-security-test" xmlns:if="ant:if" xmlns:unless="ant:unless">
+        <attribute name="path" />
+        <sequential>
+            <local name="do-run-test" />
+            <condition property="do-run-test" else="false">
+                <or>
+                    <equals arg1="${env.security}" arg2="@{path}" />
+                    <not>
+                        <isset property="env.security" />
+                    </not>
+                </or>
+            </condition>
+
+            <sequential if:true="${do-run-test}">
+                <local name="absolute.path" />
+                <property name="absolute.path" location="@{path}" />
+                <echo message="${line.separator}${line.separator}${line.separator}" />
+                <echo message=" ***************************************************************************" />
+                <echo message=" * Running group @{path} " />
+                <echo message=" * Path: ${absolute.path} " />
+                <echo message=" ***************************************************************************" />
+                <echo message="${line.separator}${line.separator}${line.separator}" />
+                <ant dir="@{path}" target="all" />
+            </sequential>
+        </sequential>
+    </macrodef>
+</project>

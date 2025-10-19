@@ -1,0 +1,84 @@
+type=page
+status=published
+title=list-lifecycle-modules
+next=list-log-attributes.html
+prev=list-libraries.html
+~~~~~~
+
+= list-lifecycle-modules
+
+[[list-lifecycle-modules]]
+
+== list-lifecycle-modules
+
+Lists the lifecycle modules
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-lifecycle-modules [--help]
+[target]
+----
+
+=== Description
+
+The `list-lifecycle-modules` subcommand lists lifecycle modules. A
+lifecycle module provides a means of running a short or long duration
+Java-based task at a specific stage in the server life cycle. This
+subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  Indicates the location where lifecycle modules are to be listed. Valid
+  values are
+
+  * `server`- Specifies the default server instance as the target for
+  listing lifecycle modules. `server` is the name of the default server
+  instance and is the default value for this operand.
+  * cluster_name - Specifies a particular cluster as the target for
+  listing lifecycle modules.
+  * instance_name - Specifies a particular server instance as the target
+  for listing lifecycle modules.
+
+=== Examples
+
+[[sthref1627]]
+
+==== Example 1   Listing Lifecycle Modules
+
+[source]
+----
+asadmin> list-lifecycle-modules
+WSTCPConnectorLCModule
+Command list-lifecycle-modules executed successfully
+----
+
+`WSTCPConnectorLCModule` is the only lifecycle module listed for the
+default target, `server`.
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-lifecycle-module.adoc#create-lifecycle-module[`create-lifecycle-module`(1)],
+xref:delete-lifecycle-module.adoc#delete-lifecycle-module[`delete-lifecycle-module`(1)]
+
+

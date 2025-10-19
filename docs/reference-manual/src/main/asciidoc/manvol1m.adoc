@@ -1,0 +1,18 @@
+type=page
+status=published
+title={productName} {product-majorVersion} Utility Commands
+next=appclient.html
+prev=version.html
+~~~~~~
+
+= {productName} {product-majorVersion} Utility Commands
+
+[[sthref2356]]
+
+
+[[glassfish-server-open-source-edition-5.0-utility-commands]]
+== 2 {productName} {product-majorVersion} Utility Commands
+
+This section describes {productName} utility commands.
+
+

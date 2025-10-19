@@ -1,0 +1,46 @@
+type=page
+status=published
+title=security
+prev=resource.html
+~~~~~~
+
+= security
+
+[[security]]
+
+== security
+
+Secure and administer {productName} applications
+
+=== Description
+
+Security is about protecting data: how to prevent unauthorized access or
+damage to it in storage or transit. {productName} has a dynamic,
+extensible security architecture based on the Jakarta EE standard. Built in
+security features include cryptography, authentication and
+authorization, and public key infrastructure. {productName} is built
+on the Java security model, which uses a sandbox where applications can
+run safely, without potential risk to systems or users.
+
+=== See Also
+
+xref:change-admin-password.adoc#change-admin-password[`change-admin-password`(1)],
+xref:change-master-password.adoc#change-master-password[`change-master-password`(1)],
+xref:create-auth-realm.adoc#create-auth-realm[`create-auth-realm`(1)],
+xref:create-file-user.adoc#create-file-user[`create-file-user`(1)],
+xref:create-message-security-provider.adoc#create-message-security-provider[`create-message-security-provider`(1)],
+xref:create-password-alias.adoc#create-password-alias[`create-password-alias`(1)],
+xref:create-ssl.adoc#create-ssl[`create-ssl`(1)],
+xref:delete-auth-realm.adoc#delete-auth-realm[`delete-auth-realm`(1)],
+xref:delete-file-user.adoc#delete-file-user[`delete-file-user`(1)],
+xref:delete-message-security-provider.adoc#delete-message-security-provider[`delete-message-security-provider`(1)],
+xref:delete-password-alias.adoc#delete-password-alias[`delete-password-alias`(1)],
+xref:delete-ssl.adoc#delete-ssl[`delete-ssl`(1)],
+xref:list-auth-realms.adoc#list-auth-realms[`list-auth-realms`(1)],
+xref:list-connector-security-maps.adoc#list-connector-security-maps[`list-connector-security-maps`(1)],
+xref:list-file-groups.adoc#list-file-groups[`list-file-groups`(1)],
+xref:list-file-users.adoc#list-file-users[`list-file-users`(1)].
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+

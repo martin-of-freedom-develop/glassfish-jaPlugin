@@ -1,0 +1,140 @@
+type=page
+status=published
+title=create-mail-resource
+next=create-managed-executor-service.html
+prev=create-local-instance.html
+~~~~~~
+
+= create-mail-resource
+
+[[create-mail-resource]]
+
+== create-mail-resource
+
+Creates a Jakarta Mail session resource
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] create-mail-resource [--help]
+[--target target] --mailhost hostname
+--mailuser username --fromaddress address [--storeprotocol storeprotocol]
+[--storeprotocolclass storeprotocolclass] [--transprotocol transprotocol]
+[--transprotocolclass transprotocolclass] [--debug={false|true}] [--enabled={true|false}]
+[--description resource-description] [--property (name=value)[:name=value]*] jndi-name
+----
+
+=== Description
+
+The `create-mail-resource` subcommand creates a Jakarta Mail session
+resource.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  This option specifies the target for which you are creating the
+  Jakarta Mail session resource. Valid values are:
++
+  `server`;;
+    Creates the resource for the default server instance. This is the
+    default value.
+  `domain`;;
+    Creates the resource for the domain.
+  cluster_name;;
+    Creates the resource for every server instance in the cluster.
+  instance_name;;
+    Creates the resource for a particular server instance.
+`--mailhost`::
+  The DNS name of the default mail server. The connect methods of the
+  Store and Transport objects use this value if a protocol-specific host
+  property is not supplied. The name must be resolvable to an actual
+  host name.
+`--mailuser`::
+  The name of the mail account user provided when connecting to a mail
+  server. The connect methods of the Store and Transport objects use
+  this value if a protocol-specific username property is not supplied.
+`--fromaddress`::
+  The email address of the default user, in the form
+  username`@`host`.`domain.
+`--storeprotocol`::
+  The mail server store protocol. The default is `imap`. Change this
+  value only if you have reconfigured the {productName}'s mail
+  provider to use a non-default store protocol.
+`--storeprotocolclass`::
+  The mail server store protocol class name. The default is
+  `com.sun.mail.imap.IMAPStore`. Change this value only if you have
+  reconfigured the {productName}'s mail provider to use a nondefault
+  store protocol.
+`--transprotocol`::
+  The mail server transport protocol. The default is `smtp`. Change this
+  value only if you have reconfigured the {productName}'s mail
+  provider to use a nondefault transport protocol.
+`--transprotocolclass`::
+  The mail server transport protocol class name. The default is
+  `com.sun.mail.smtp.SMTPTransport`. Change this value only if you have
+  reconfigured the {productName}'s mail provider to use a nondefault
+  transport protocol.
+`--debug`::
+  If set to true, the server starts up in debug mode for this resource.
+  If the Jakarta Mail log level is set to `FINE` or `FINER`, the debugging
+  output will be generated and will be included in the server log file.
+  The default value is false.
+`--enabled`::
+  If set to true, the resource is enabled at runtime. The default value
+  is true.
+`--description`::
+  Text providing some details of the Jakarta Mail resource.
+`--property`::
+  Optional attribute name/value pairs for configuring the Jakarta Mail
+  resource. The {productName}-specific ``mail-`` prefix is converted
+  to the standard mail prefix. The Jakarta Mail API documentation lists the
+  properties you might want to set.
+
+=== Operands
+
+jndi-name::
+  The JNDI name of the Jakarta Mail resource to be created. It is a
+  recommended practice to use the naming subcontext prefix `mail/` for
+  Jakarta Mail resources.
+
+=== Examples
+
+[[sthref317]]
+
+==== Example 1   Creating a Jakarta Mail Resource
+
+This example creates a Jakarta Mail resource named `mail/MyMailSession`. The
+JNDI name for a Jakarta Mail session resource customarily includes the
+`mail/` naming subcontext.
+
+[source]
+----
+asadmin> create-mail-resource --mailhost localhost
+--mailuser sample --fromaddress sample@sun.com mail/MyMailSession
+Command create-mail-resource executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:delete-mail-resource.adoc#delete-mail-resource[`delete-mail-resource`(1)],
+xref:list-mail-resources.adoc#list-mail-resources[`list-mail-resources`(1)]
+
+

@@ -1,0 +1,87 @@
+type=page
+status=published
+title=unfreeze-transaction-service
+next=uninstall-node.html
+prev=undeploy.html
+~~~~~~
+
+= unfreeze-transaction-service
+
+[[unfreeze-transaction-service]]
+
+== unfreeze-transaction-service
+
+Resumes all suspended transactions
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] unfreeze-transaction-service [--help]
+[--target target]
+----
+
+=== Description
+
+The `unfreeze-transaction-service` subcommand restarts the transaction
+subsystem and resumes all in-flight transactions. Invoke this subcommand
+on an already frozen transaction subsystem. This subcommand is supported
+in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  This option specifies the target on which you are unfreezing the
+  transaction service. Valid values are:
+
+  `server`;;
+    Unfreezes the transaction service for the default server instance
+    `server` and is the default value.
+  configuration_name;;
+    Unfreezes the transaction service for all server instances that use
+    the named configuration.
+  cluster_name;;
+    Unfreezes the transaction service for every server instance in the
+    cluster.
+  instance_name;;
+    Unfreezes the transaction service for a particular server instance.
+
+=== Examples
+
+[[sthref2203]]
+
+==== Example 1   Using unfreeze-transaction-service
+
+[source]
+----
+% asadmin unfreeze-transaction-service
+Command unfreeze-transaction-service executed successfully
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:freeze-transaction-service.adoc#freeze-transaction-service[`freeze-transaction-service`(1)],
+xref:recover-transactions.adoc#recover-transactions[`recover-transactions`(1)],
+xref:rollback-transaction.adoc#rollback-transaction[`rollback-transaction`(1)]
+
+"xref:administration-guide.adoc#administering-transactions[Administering Transactions]" in {productName} Administration Guide
+
+"https://eclipse-ee4j.github.io/jakartaee-tutorial/#transactions[Transactions]"
+in The Jakarta EE Tutorial
+
+

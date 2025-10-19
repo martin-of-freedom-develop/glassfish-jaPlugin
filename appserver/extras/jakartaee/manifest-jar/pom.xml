@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 1997, 2022 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.extras</groupId>
+        <artifactId>jakartaee-pom</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>jakartaee</artifactId>
+
+    <name>GlassFish jakartaee.jar </name>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Class-Path>../modules/jakarta.servlet-api.jar ../modules/jakarta.annotation-api.jar ../modules/jakarta.ejb-api.jar ../modules/jakarta.transaction-api.jar ../modules/jakarta.resource-api.jar ../modules/jakarta.authentication-api.jar ../modules/jakarta.authorization-api.jar ../modules/jakarta.xml.bind-api.jar ../modules/webservices-api-osgi.jar ../modules/jakarta.mail-api.jar ../modules/jakarta.activation-api.jar ../modules/jakarta.faces.jar ../modules/jakarta.servlet.jsp-api.jar ../modules/expressly.jar ../modules/jakarta.el-api.jar ../modules/jakarta.servlet.jsp.jstl-api.jar ../modules/jakarta.persistence-api.jar ../modules/jakarta.jms-api.jar ../modules/hibernate-validator.jar ../modules/jakarta.validation-api.jar ../modules/jakarta.enterprise.cdi-api.jar ../modules/jakarta.ws.rs-api.jar ../modules/parsson.jar ../modules/jakarta.json.bind-api.jar ../modules/jakarta.websocket-api.jar ../modules/jakarta.websocket-client-api.jar ../modules/jakarta.enterprise.concurrent-api.jar ../modules/jakarta.batch-api.jar ../modules/jakarta.inject-api.jar</Class-Path>
+                            <GlassFish-ServerExcluded>true</GlassFish-ServerExcluded>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

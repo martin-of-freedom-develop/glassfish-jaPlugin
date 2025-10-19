@@ -1,0 +1,19 @@
+type=page
+status=published
+title=Preface
+next=upgrading-legacy-installation.html
+prev=title.html
+~~~~~~
+
+= Preface
+
+[[preface]]
+== Preface
+
+This guide explains how to upgrade to {productName} from previous
+of {productName} and Sun GlassFish Enterprise Server product releases.
+This guide also includes instructions for upgrading configuration
+data and Jakarta EE applications from binary-compatible earlier versions
+of this software to work with {productName}.
+Finally, this guide describes compatibility issues that affect data
+and applications that are to be migrated.

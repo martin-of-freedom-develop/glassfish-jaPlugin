@@ -1,0 +1,951 @@
+type=page
+status=published
+title={productName} {product-majorVersion} Release Notes
+prev=preface.html
+~~~~~~
+
+= {productName} {product-majorVersion} Release Notes
+
+[[GSRLN]]
+== 1 {productName} {product-majorVersion} Release Notes
+
+{productName} provides a lightweight, modular server for the
+development of Jakarta EE {jakartaee} applications. It is the first Compatible
+Implementation for Jakarta EE. It delivers a highly productive
+platform for developing with the latest Jakarta EE technologies.
+
+For any issue or information on {productName},
+see the https://glassfish.org/.
+
+These Release Notes provide late-breaking information about {productName} {product-majorVersion}
+software and documentation. These Release Notes include
+summaries of supported hardware, operating environments, and JDK and
+JDBC/RDBMS requirements. Also included are a summary of new product
+features in the {product-majorVersion} release, and descriptions and workarounds for known
+issues and limitations.
+
+Refer to this document prior to installing, configuring, or using
+{productName} {product-majorVersion} software. Consult this document periodically to
+view the most up-to-date product information.
+
+* xref:#whats-new-in-the-glassfish-server-release["What's New in the {productName} {product-majorVersion} Release?"]
+* xref:#hardware-and-software-requirements["Hardware and Software Requirements"]
+* xref:#GSRLN00253["Known Issues in {productName} {product-majorVersion}"]
+* xref:#restrictions-and-deprecated-functionality["Restrictions and Deprecated Functionality"]
+* xref:#features-available-only-in-the-full-platform["Features Available Only in the Full Platform"]
+* xref:#jakarta-ee-support["Jakarta EE Standards Support"]
+* xref:#microprofile-support["MicroProfile Standards Support"]
+* xref:#extensions-support["Extensions to the Standard APIs"]
+* xref:#how-to-report-problems-and-provide-feedback["How to Report Problems and Provide Feedback"]
+* xref:#additional-resources["Additional Resources"]
+
+[[revision-history]]
+
+[[whats-new-in-the-glassfish-server-release]]
+
+=== What's New in the {productName} {product-majorVersion} Release?
+
+{productName} {product-majorVersion} is the first Compatible Implementation of the Jakarta EE {jakartaee] Platform.
+
+{productName} {product-majorVersion} also supports the following new features:
+
+* https://microprofile.io/specifications/config/[MicroProfile Config]  API
+* https://microprofile.io/specifications/jwt/[MicroProfile JWT] API
+* https://microprofile.io/specifications/rest-client[MicroProfile REST Client] API (since {productName} 7.0.6)
+* https://microprofile.io/specifications/health[MicroProfile Health] API (since {productName} 7.1.0)
+* https://jakarta.ee/specifications/mvc/[Jakarta MVC] API updated to version 2.0
+* xref:embedded-server-guide.adoc#running-from-command-line[Runnable Embedded GlassFish JAR] (since {productName} 7.0.18)
+* xref:administration-guide.adoc#log-executed-admin-commands[Admin Command Logger] (since {productName} 7.0.16)
+* https://github.com/eclipse-ee4j/glassfish/discussions/25343[SSH nodes on Windows] via the native Windows SSH service (since {productName} 7.0.23)
+
+For a complete list of the Jakarta EE technologies included in {productName} {product-currentVersion},
+see xref:#jakarta-ee-support[Jakarta EE Standards Support].
+
+For a complete list of the MicroProfile technologies included in {productName} {product-currentVersion},
+see xref:#microprofile-support[MicroProfile Standards Support].
+
+For more information about changes in {productName} {product-majorVersion} and all its minor and patch versions, check out the page about https://glassfish.org/download_gf{product-majorVersion}.html[all the {productName} {product-majorVersion} releases].
+
+[NOTE]
+====
+While {productName} {product-majorVersion} milestone releases focused on providing an application server for developers to explore and begin
+exploiting the new and updated technologies in the Jakarta EE {jakartaee] platform, the final {productName} {product-majorVersion} version
+focuses on providing a stable and reliable platform for production use.
+
+The following features of {productName} were improved in the {product-majorVersion}.0.0 version or later patch releases:
+
+* Clusters and centralized management of instances
+* High availability features
+* Startup time and deployment time
+* Performance and memory usage
+* Security
+* Embedded GlassFish
+* Stability and automated test coverage
+
+====
+
+[[hardware-and-software-requirements]]
+
+=== Hardware and Software Requirements
+
+This section lists the requirements that must be met before installing
+{productName} Release {product-majorVersion} software.
+
+The following topics are addressed here:
+
+* xref:#required-jdk-versions[Required JDK Versions]
+* xref:#required-free-ports[Required Free Ports]
+* xref:#message-queue-broker-requirements[Message Queue Broker Requirements]
+* xref:#paths-and-environment-settings-for-the-jdk-software[Paths and Environment Settings for the JDK Software]
+
+[[required-jdk-versions]]
+
+==== Required JDK Versions
+
+{productName} Release 7.1 requires Java 17 minimum and runs on JDK 17 to JDK 21, experimentally on higher versions.
+{productName} Release 7.0 requires Java 11 minimum and runs on JDK 11 to JDK 21, experimentally on higher versions.
+
+Also be sure to see xref:#paths-and-environment-settings-for-the-jdk-software[Paths and Environment Settings for the
+JDK Software] for important JDK configuration instructions.
+
+[NOTE]
+====
+It is recommended that any machine that is hosting a {productName}
+DAS or server instance have a minimum of 1 GB RAM.
+====
+
+[[required-free-ports]]
+
+==== Required Free Ports
+
+You must have sixteen unused ports available for the ports {productName} uses. The installation program automatically detects ports that
+are in use and suggests currently unused ports for the default settings.
+The initial default port assignments are listed in the following table.
+If these default port numbers are in use, the installation program
+assigns a randomly selected port number from the dynamic port range. The
+selected port number might not be the next available port number.
+
+Table 1-2 Default Port Assignments for {productName} {product-majorVersion}
+
+[width="100%",cols="63%,37%",options="header",]
+|===
+|Port Number |Usage
+|4848 |Administration Console
+
+|8080 |HTTP
+
+|8081 |HTTPS
+
+|8686 |Pure JMX clients
+
+|3700 |IIOP
+
+|3820 |IIOP/SSL
+
+|3920 |IIOP/SSL with mutual authentication
+
+|22 |SSH port
+
+|9009 |Java debugger
+
+|7676 |JMS provider
+
+|Auto-generated from the operating system's dynamic port range |Message Queue TCP port
+
+|Auto-generated from the operating system's dynamic port range |Message Queue Admin port
+
+|9090 |GMS TCP start port
+
+|9200 |GMS TCP end port
+
+|Auto-generated between GMS TCP start and end ports |GMS listener port
+
+|Auto generated between 2048 and 49151 |GMS multicast port
+|===
+
+
+In some situations, such as when multiple domains are running on a
+single host, port conflicts can arise in the auto-generated ports used
+by Message Queue and the GMS. To avoid these conflicts, you can
+configure the JMS host and the GMS to use specific ports.
+
+[[to-configure-specific-ports-for-a-jms-host]]
+
+===== To Configure Specific Ports for a JMS Host
+
+When you create a JMS Host, {productName} automatically selects ports
+for the JMS provider (called the portmapper port in Message Queue
+terminology), the Message Queue TCP port and the Message Queue admin
+port.
+
+To provide specific values for these ports, use the `--mqport` and
+`--property` options when creating the JMS host:
+
+[source]
+----
+asadmin> create-jms-host --mqhost hostName --mqport portNumber \
+--mquser adminUser --mqpassword adminPassword --target glassfishTarget \
+--property imq\\.jms\\.tcp\\.port=tcpPort:imq\\.admin\\.tcp\\.port=adminPort \
+jms-host-name
+----
+
+`--mqport` `portNumber`::
+  This option specifies the JMS provider port number.
+`--property imq\\.jms\\.tcp\\.port=``tcpPort``:imq\\.admin\\.tcp\\.port=``adminPort`::
+  The `imq.jms.tcp.port` and `imq.admin.tcp.port` properties specify the
+  TCP port and the admin port numbers. The double backslashes (`\\`) are
+  used in the `--properties` option to escape the dots in the property
+  names.
+
+[[to-configure-specific-gms-ports-for-a-cluster]]
+
+===== To Configure Specific GMS Ports for a Cluster
+
+When you create a cluster, {productName} automatically selects a port
+for GMS multicast that does not conflict with the GMS multicast port of
+any other cluster in the domain. Additionally, when you start a cluster,
+the GMS automatically selects an available port in a specific range for
+its TCP listener.
+
+If two or more domains are running on the same host, configure the
+clusters in the domains to ensure that no GMS port conflicts can arise
+among the clusters. To avoid possible port conflicts, use the
+`--multicast` and `--properties` options when creating the cluster:
+
+[source]
+----
+asadmin> create-cluster --multicastport multicast-port \
+--properties GMS_TCPSTARTPORT=start-port:GMS_TCPENDPORT=end-port \
+cluster-name
+----
+
+`--multicastport` `multicast-port`::
+  This option specifies the port number for the GMS to use for UDP
+  multicast.
+`--properties GMS_TCPSTARTPORT=``start-port``:GMS_TCPENDPORT=``end-port`::
+  The `GMS_TCPSTARTPORT` and `GMS_TCPENDPORT` properties specify the
+  range of port numbers the GMS is to use when selecting an available
+  port for its TCP listener.
++
+
+[NOTE]
+====
+Though you can create a cluster, there is no support for
+configuration, as this has not been tested.
+====
+
+[[message-queue-broker-requirements]]
+
+==== Message Queue Broker Requirements
+
+{productName} {product-majorVersion} is now bundled with Message Queue (MQ) Broker
+5.1.1. Refer to the
+https://github.com/eclipse-ee4j/glassfishdoc/5.1/mq-release-notes.pdf[`Open Message Queue Release Notes`]
+for complete information about MQ Broker requirements.
+
+[[paths-and-environment-settings-for-the-jdk-software]]
+
+==== Paths and Environment Settings for the JDK Software
+
+Ensure that your JDK configuration settings on all local and remote
+{productName} hosts adhere to the guidelines listed below. Failure to
+adhere to these guidelines can cause various problems that may be
+difficult to trace.
+
+The following topics are addressed here:
+
+* xref:#use-the-jdk-binaries[Use the JDK Binaries]
+* xref:#set-the-java_home-environment-variable[Set the `JAVA_HOME` Environment Variable]
+* xref:#set-other-environment-variables-as-necessary[Set Other Environment Variables As Necessary]
+
+[[use-the-jdk-binaries]]
+
+===== Use the JDK Binaries
+
+The following binary files that are used with {productName} must come
+from the JDK software, not the Java Runtime Environment (JRE) software:
+
+* `java`
+* `keytool`
+
+To meet this requirement, ensure that the `bin` directory for the JDK
+software precedes the `bin` directory for the JRE software in your path.
+
+[[set-the-java_home-environment-variable]]
+
+===== Set the `JAVA_HOME` Environment Variable
+
+Before performing any {productName} installation or configuration
+procedures, set the `JAVA_HOME` environment variable on the {productName} host machine to point to the correct Java version. Also be sure
+to add the `JAVA_HOME/bin` directory to the `PATH` variable for your
+environment. The `JAVA_HOME` variable must be set on all local and
+remote {productName} hosts.
+
+[[set-other-environment-variables-as-necessary]]
+
+===== Set Other Environment Variables As Necessary
+
+All remote `asadmin` subcommands require the correct version of Java to
+be available on the affected remote machine. For example, when creating
+a cluster or server instance on a remote machine, the remote machine
+uses its local default Java installation, not the Java installation that
+is on the DAS. Errors will therefore occur if the remote machine uses
+the wrong Java version.
+
+Depending on the remote subcommand, the errors may not occur when the
+subcommand is executed, but may occur later, when interacting with a
+configuration or resource created or modified by the subcommand. For
+example, when creating a clustered server instance on a remote machine,
+the error may only first appear when you attempt to deploy an
+application on that server instance.
+
+This issue is more likely to be encountered when {productName} is
+installed on the remote server by means of a ZIP file package as you do
+not have the option to specifically choose your Java version while
+unzipping a ZIP file.
+
+Depending on what shell is invoked via SSH on the remote host, the
+`JAVA_HOME` and `PATH` environment variables may need to be explicitly
+set in `.bashrc`, `.cshrc`, or some other shell configuration file. This
+configuration file may differ from the one that is used when you log in
+to the machine, such as `.profile`.
+
+Alternatively, you can specifically set the Java path with the `AS_JAVA`
+property in the in the as-install``/config/asenv.conf`` file.
+
+[[GSRLN00253]][[known-issues-in-glassfish-server-5.1]]
+
+=== Known Issues in {productName} {product-majorVersion}
+
+This section describes known issues and any available workarounds for
+{productName} {product-majorVersion} software.
+
+The following topics are addressed here:
+
+* xref:#jaxb-and-jax-ws-no-longer-part-of-java-ee-platform[JAXB and JAX-WS no longer part of Jakarta EE platform]
+* xref:#resource-validation-property-is-enabled-in-the-jvm-option-for-deployment[Resource validation property is enabled in the JVM option for deployment]
+* xref:#update-tool-and-pkg-command-no-longer-part-of-glassfish-server[Update Tool and pkg Command no longer part of {productName}]
+* xref:#java-db-has-been-replaced-by-apache-derby[Java DB has been replaced by Apache Derby]
+
+[[jaxb-and-jax-ws-no-longer-part-of-java-ee-platform]]
+
+==== JAXB and JAX-WS no longer part of Jakarta EE platform
+
+===== Description
+
+Jakarta XML Binding (previous JAXB) and Jakarta XML Web Services (previouly JAX-WS)
+are part of Jakarta EE platform, but as optional technologies. However,
+the jars are packaged in GlassFish.
+
+[NOTE]
+====
+These jars are present only in the Full Platform distribution of GlassFish and
+not part of the Web Profile distribution.
+====
+
+[[workaround]]
+
+===== Workaround
+
+None
+
+[[resource-validation-property-is-enabled-in-the-jvm-option-for-deployment]]
+
+==== Resource validation property is enabled in the JVM option for deployment
+
+===== Description
+
+A new JVM option for deployment - deployment.resource.validation is
+introduced in {productName} {product-majorVersion}. This property is set to True by
+default so that each resource is validated during deployment time. This
+ensures that all resources are created beforehand. This property is
+applicable for administration server as well as instances when clusters
+are involved.
+
+
+[NOTE]
+====
+However, for deployment of applications containing embedded resource
+adapter, a connector resource is created after deployment. For the
+deployment of such applications to succeed, the server(s) must be
+started with this property set to false. For more information on JVM
+deployment options see
+https://github.com/eclipse-ee4j/glassfishdoc/5.1/administration-guide.pdf#G11.998994[`Administering JVM Options.`]
+====
+
+
+[[workaround-1]]
+
+===== Workaround
+
+In case you do not want the resource validation to take place during the
+deployment, you can set this property value to False.
+
+[[update-tool-and-pkg-command-no-longer-part-of-glassfish-server]]
+
+==== Update Tool and pkg Command no longer part of {productName}
+
+===== Description
+
+In previous releases, you could update your {productName} software
+using the pkg command and the Update tool. Since the recent release of
+{productName} does not require the use of these features, they have
+been removed from the {productName} installation.
+
+[[workaround-2]]
+
+===== Workaround
+
+No workaround.
+
+[[java-db-has-been-replaced-by-apache-derby]]
+
+==== Java DB has been replaced by Apache Derby
+
+===== Description
+
+In the previous releases, Java DB was used as the database for {productName}s. With the release of {productName} {product-majorVersion}, Apache Derby
+10.13.1.1 has replaced Java DB as the database for {productName}s.
+
+[[workaround-3]]
+
+===== Workaround
+
+No workaround.
+
+[[restrictions-and-deprecated-functionality]]
+
+=== Restrictions and Deprecated Functionality
+
+This section describes restrictions and deprecated functionality in
+{productName} {product-majorVersion}.
+
+The following topics are addressed here:
+
+* xref:#asadmin-subcommands[`asadmin` Subcommands]
+* <<deprecated-unsupported-and-obsolete-options, Deprecated, Unsupported, and Obsolete Options>>
+* <<Applications That Use Apache Derby>>
+* <<Metro Reliable Messaging in `InOrder` Delivery Mode>>
+
+[[asadmin-subcommands]]
+==== `asadmin` Subcommands
+
+In {productName} {product-majorVersion}, it is recommended that utility options of the
+`asadmin` command precede the subcommand. Utility options are options
+that control the behavior of the `asadmin` utility, as distinguished
+from subcommand options. Use of the following options after the
+subcommand is deprecated.
+
+* `--host`
+* `--port`
+* `--user`
+* `--passwordfile`
+* `--terse`
+* `--secure`
+* `--echo`
+* `--interactive`
+
+[[deprecated-unsupported-and-obsolete-options]]
+==== Deprecated, Unsupported, and Obsolete Options
+
+Options in xref:#gaeki[Table 1-3] are deprecated or no longer supported,
+or are obsolete and are ignored.
+
+[[gaeki]]
+
+Table 1-3 Deprecated, Unsupported, and Obsolete Options for `asadmin`
+and Subcommands
+
+[width="100%",cols="33%,67%",options="header",]
+|===
+|Option |Affected Subcommands
+|`--acceptlang` |Unsupported for the `create-virtual-server` subcommand.
+
+|`--acls` |Unsupported for the `create-virtual-server` subcommand.
+
+|`--adminpassword` |Unsupported for all relevant subcommands. Use
+`--passwordfile` instead.
+
+|`--autoapplyenabled` |Obsolete for the `create-http-lb` subcommand.
+
+|`--autohadb` |Obsolete for the `create-cluster` subcommand.
+
+|`--autohadboverride` |Obsolete for the `start-cluster` subcommand and
+the `stop-cluster` subcommand
+
+|`--blockingenabled` |Unsupported for the `create-http-listener` subcommand.
+
+|`--configfile` |Unsupported for the `create-virtual-server` subcommand.
+
+|`--defaultobj` |Unsupported for the `create-virtual-server` subcommand.
+
+|`--defaultvs` |Deprecated for the `create-http-listener` subcommand.
+Use `--default-virtual-server` instead.
+
+|`--description` |Obsolete for the `restore-domain` subcommand.
+
+|`--devicesize` |Obsolete for the `create-cluster` subcommand.
+
+|`--haadminpassword` |Obsolete for the `create-cluster` subcommand.
+
+|`--haadminpasswordfile` |Obsolete for the `create-cluster` subcommand.
+
+|`--haagentport` |Obsolete for the `create-cluster` subcommand.
+
+|`--haproperty` |Obsolete for the `create-cluster` subcommand.
+
+|`--hosts` |Obsolete for the `create-cluster` subcommand.
+
+|`--ignoreDescriptorItem` |Replaced by the all lowercase option
+`--ignoredescriptoritem` in the `set-web-context-param` subcommand and
+the `set-web-env-entry` subcommand.
+
+|`--mime` |Unsupported for the `create-virtual-server` subcommand.
+
+|`--password` |Unsupported for all remote subcommands. Use
+`--passwordfile` instead.
+
+|`--path` |Unsupported for the `create-domain` subcommand. Use
+`--domaindir` instead.
+
+|`--portbase` |Obsolete only for the `create-cluster` subcommand. This
+option is still valid in other subcommands such as `create-domain`,
+`create-instance`, and `create-local-instance`.
+
+|`--resourcetype` |Unsupported for all relevant subcommands. Use
+`--restype` instead.
+
+|`--retrievefile` |Obsolete for the `export-http-lb-config` subcommand.
+
+|`--setenv` |Obsolete for the `start-instance` subcommand.
+
+|`--target` a|
+Obsolete only for the following subcommands:
+
+* `create-connector-connection-pool`
+* `create-resource-adapter-config`
+* `delete-connector-connection-pool`
+* `delete-connector-security-map`
+* `delete-jdbc-connection-pool`
+* `delete-resource-ref`
+
+Replaced by an operand in the `list-custom-resources` subcommand and the
+`list-jndi-entries` subcommand.
+|===
+
+
+[[applications-that-use-apache-derby]]
+
+==== Applications That Use Apache Derby
+
+The directory location of Apache Derby in {productName} {product-majorVersion} has
+changed from its location in previous installations. Suppose that you
+have deployed applications that use Apache Derby databases in your
+previous server installation, and you upgrade your existing installation
+to {productName} {product-majorVersion}. If you run the `asadmin start-database` command
+and successfully start Apache Derby, you could run into problems while
+trying to run applications that were deployed on your previous server
+installation.
+
+To solve this problem, you can copy the `databases` directory from your
+previous installation to as-install``/databases``. Make sure the database
+is not running when you do this.
+
+Alternatively, you can perform these steps:
+
+1. Use the `asadmin start-database` command with the `--dbhome` option
+pointing to the `databases` directory in the older version of Apache
+Derby. For example:
++
+[source]
+----
+asadmin start-database --dbhome c:\glassfish\databases
+----
+2. After upgrade, start {productName} {product-majorVersion}.
+
+[[metro-reliable-messaging-in-inorder-delivery-mode]]
+
+==== Metro Reliable Messaging in `InOrder` Delivery Mode
+
+The Metro Reliable Messaging in `InOrder` Delivery mode has not been
+tested for high availability in {productName} {product-majorVersion}. The feature may
+work, but it has not been formally tested and is therefore not a
+supported feature.
+
+[[no-support-for-kerberos-on-aix]]
+
+==== No Support for Kerberos on AIX
+
+{productName} {product-majorVersion} does not support Kerberos on the AIX platform.
+
+For the complete report about this issue, see
+https://github.com/javaee/glassfish/issues/16728[`Issue-16728`]
+
+[[features-available-only-in-the-full-platform]]
+
+=== Features Available Only in the Full Platform
+
+The following features of {productName} {product-majorVersion} are available only in the
+Full Platform:
+
+* EJB features that make up the full EJB 3.2 API, such as remote EJB
+components, message-driven beans, web service EJB endpoints, and the EJB
+Timer Service
++
+The EJB 3.2 Lite specification is supported in the Web Profile. This
+specification allows enterprise beans within web applications and
+includes support for local stateless session beans, stateful session
+beans, and singleton session beans.
+* Application Client Container
+* JMS resources
+* Web services
++
+In the Web Profile, a servlet or EJB component cannot be a web service
+endpoint. The `sun-web.xml` and `sun-ejb-jar.xml` elements that are
+related to web services are ignored.
+* Message security
+* Jakarta Mail resources
+
+Connector modules that use only outbound communication features and
+work-management that does not involve inbound communication features are
+supported in the Web Profile. Other connector features are supported
+only in the {productName} {product-majorVersion} full platform.
+
+[[jakarta-ee-support]]
+=== Jakarta EE Standards Support[[java-ee-standards-support]]
+
+xref:#gjxcp[Table 1-4] lists the Jakarta EE standards implemented in
+{productName} {product-majorVersion}. The table also indicates the distributions in
+which the implementation of a standard is available.
+
+[NOTE]
+====
+* X indicates that the implementation is available in the distribution.
+* - indicates that the implementation is not available in the
+distribution.
+====
+
+[[gjxcp]]
+
+Table 1-4 Jakarta EE Standards Implementations in {productName} {product-currentVersion}
+
+[width="100%",cols="<48%,<10%,<10%,<10%",options="header",]
+|===
+|Jakarta EE Standard |Version |{productName} {product-currentVersion} Full Platform |{productName} {product-currentVersion} Web Profile
+
+|https://jakarta.ee/specifications/platform/10/[Jakarta EE Specification]
+|{jakartaee}
+|X
+|X
+
+|https://jakarta.ee/specifications/activation/[Activation]
+|2.1
+|X
+|-
+
+|https://jakarta.ee/specifications/security/[Security]
+|{jakarta-security-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/batch/[Batch]
+|{jakarta-batch-api-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/concurrency/[Concurrency]
+|{jakarta-concurrent-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/jsonp/[JSON Processing]
+|{jakarta-jsonp-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/jsonb/[JSON Binding]
+|{jakarta-json-bind-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/websocket/[WebSocket]
+|{jakarta-websocket-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/websocket/[Servlet]
+|{jakarta-servlet-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/pages/[Server Pages]
+|{jakarta-pages-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/expression-language/[Expression Language]
+|{jakarta-el-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/debugging/[Debugging Support for Other Languages]
+|2.0
+|X
+|X
+
+|https://jakarta.ee/specifications/tags/[Standard Tag Library]
+|{jstl-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/mvc/[MVC]
+|{jakarta-mvc-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/faces/[Java Server Faces]
+|{jakarta-faces-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/annotations/[Annotations]
+|{jakarta-annotation-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/transactions/[Transactions]
+|{jakarta-transaction-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/persistence/[Persistence]
+|{jakarta-persistence-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/managedbeans/[Managed Beans]
+|2.1
+|X
+|X
+
+|https://jakarta.ee/specifications/interceptors/[Interceptors]
+|{jakarta-interceptor-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/dependency-injection/[Dependency Injection]
+|{jakarta-inject-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/cdi/[Contexts and Dependency Injection]
+|{jakarta-cdi-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/persistence/[Enterprise Beans]
+|{jakarta-ejb-api-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/restful-ws/[RESTful Web Services]
+|{jakarta-rest-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/bean-validation/[Bean Validation]
+|{jakarta-validation-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/connectors/[Connectors]
+|{jakarta-resource-api-version}
+|X
+|X^*^
+
+|https://jakarta.ee/specifications/xml-web-services/[XML Web Services]
+|{jakarta-xml-ws-api-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/soap-attachments/[SOAP With Attachements]
+|3.0
+|X
+|-
+
+|https://jakarta.ee/specifications/xml-binding/[XML Binding]
+|{jakarta-jaxb-impl-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/enterprise-ws/[Enterprise Web Services]
+|2.0
+|X
+|-
+
+|https://jakarta.ee/specifications/web-services-metadata/[Web Services Metadata]
+|3.0
+|X
+|-
+
+|https://jakarta.ee/specifications/messaging/[Messaging]
+|{jakarta-messaging-api-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/mail/[Mail]
+|{jakarta-mail-api-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/authentication/[Authentication]
+|{jakarta-authentication-api-version}
+|X
+|X
+
+|https://jakarta.ee/specifications/authorization/[Authorization]
+|{jakarta-authorization-api-version}
+|X
+|-
+
+|https://jakarta.ee/specifications/deployment/[Deployment]
+|1.7
+|X
+|-
+
+|https://jakarta.ee/specifications/management/[Management]
+|1.1
+|X
+|-
+
+|https://jakarta.ee/specifications/xml-rpc/[XML RPC]
+|1.1
+|X
+|-
+
+|https://jakarta.ee/specifications/xml-registries/[XML Registries]
+|1.0
+|X
+|-
+|===
+
+^*^ Standalone Connector 1.7 Container only.
+
+[[microprofile-support]]
+=== MicroProfile Standards Support
+
+xref:#microprofile-table[Table 1-5] lists the MicroProfile standards implemented in {productName} {product-currentVersion}. The table also indicates the distributions in which the implementation of a standard is available.
+
+[NOTE]
+====
+* X indicates that the implementation is available in the distribution.
+* - indicates that the implementation is not available in the distribution.
+====
+
+[[microprofile-table]]
+
+Table 1-5 MicroProfile Standards Implementations in {productName} {product-currentVersion}
+
+[width="100%",cols="<48%,<10%,<10%,<10%",options="header",]
+|===
+|MicroProfile Standard |Version |{productName} {product-currentVersion} Full Platform |{productName} {product-currentVersion} Web Profile
+
+|https://microprofile.io/specifications/config/[MicroProfile Config]
+|{microprofile-config-api-version}
+|X
+|-
+
+|https://microprofile.io/specifications/jwt/[MicroProfile JWT Authentication]
+|{microprofile-jwt-auth-api-version}
+|X
+|-
+
+|https://microprofile.io/specifications/rest-client/[MicroProfile REST Client]
+|{microprofile-rest-client-version}
+|X^*^
+|-
+
+|https://microprofile.io/specifications/health/[MicroProfile Health]
+|{microprofile-health-api-version}
+|X^**^
+|-
+|===
+
+^*^ MicroProfile REST Client is supported since {productName} 7.0.6
+
+^**^ MicroProfile Health is supported since {productName} 7.1.0
+
+[[extensions-support]]
+=== Extensions to the Standard APIs
+
+Building on the Jakarta EE and MicroProfile standards, {productName} {product-currentVersion} provides a number of components and extensions, including the following:
+
+Table 1-6 Components and extensions provided by {productName} {product-currentVersion}
+[width="100%",options="header"]
+|===
+|Component |Version |APIs |Description
+
+|Eclipse Angus |{angus-mail-version} |Jakarta Mail {jakarta-mail-api-version} |Provides email services.
+|Eclipse Epicyro |{epicyro-version} |Jakarta Authentication {jakarta-authentication-api-version} |Low-level SPI for authentication mechanisms.
+|Eclipse Exousia |{exousia-version} |Jakarta Authorization {jakarta-authorization-api-version} |Low-level SPI for authorization modules.
+|Eclipse Jersey |{jersey-version} |Jakarta RESTful Web Services {jakarta-rest-api-version}, MicroProfile REST Client {microprofile-rest-client-version} |Framework for RESTful web services and clients.
+|Eclipse Krazo |{krazo-version} |Jakarta MVC {jakarta-mvc-api-version} |MVC framework for web applications.
+|Eclipse Metro |{webservices-version} |JAXB, Jakarta XML Web Services {jakarta-xml-ws-api-version} |Web services stack.
+|Eclipse Mojarra |{mojarra-version} |Jakarta Faces {jakarta-faces-api-version} |Faces implementation with Mojarra extensions.
+|Eclipse OpenMQ |{openmq-version} |Jakarta Messaging {jakarta-messaging-api-version} |Highly available messaging broker.
+|Eclipse Parsson |{parsson-version} |Jakarta JSON Processing {jakarta-jsonp-api-version} |JSON Processing implementation.
+|Eclipse Soteria |{soteria-version} |Jakarta Security {jakarta-security-api-version} |Authentication and authorization services.
+|Eclipse Tyrus |{tyrus-version} |Jakarta WebSocket {jakarta-websocket-api-version} |WebSocket endpoints framework.
+|Eclipse Yasson |{yasson-version} |Jakarta JSON Binding {jakarta-json-bind-api-version} |JSON Binding implementation.
+|Eclipse WaSP |{wasp-version} |Jakarta Pages {jakarta-pages-api-version} |Pages implementation.
+|EclipseLink |{eclipselink-version} |Jakarta Persistence {jakarta-persistence-api-version} |Persistence implementation with extensions.
+|FasterXML Jackson |{jackson-version} | |Alternative JSON processing and binding implementation.
+|GlassFish Concurro |{concurrent-version} |Jakarta Concurrency {jakarta-concurrent-api-version} |Concurrency utilities.
+|GlassFish Grizzly |{grizzly-version} | |Scalable server framework supporting HTTP, Bayeux, Servlet API, Comet.
+|GlassFish HK2 |{hk2-version} | |Dependency injection framework.
+|GlassFish Shoal |{shoal-version} | |Clustering framework for high availability.
+|Helidon Config |{helidon-config-version} |MicroProfile Config {microprofile-config-api-version} |Configuration framework for applications.
+|Hibernate Validator |{hibernate-validator-version} |Jakarta Validation {jakarta-validation-api-version} |Validation implementation.
+|Nimbus JOSE JWT |{nimbus-version} || Handling JSON Web Tokens (JWT) and JSON Object Signing and Encryption (JOSE).
+|OmniFaces MicroProfile JWT |{omnifaces-jwt-auth-version} |MicroProfile JWT Authentication {microprofile-jwt-auth-api-version} |JWT authentication for REST endpoints.
+|Weld |{weld-version} |Jakarta Contexts and Dependency Injection {jakarta-cdi-api-version} |CDI implementation.
+|===
+
+[[how-to-report-problems-and-provide-feedback]]
+
+=== How to Report Problems and Provide Feedback
+
+If you have problems with {productName} {product-majorVersion}, provide feedback through
+one of the following mechanisms:
+
+* https://glassfish.org/CONTRIBUTING.html[{productName} Community]
+  (`https://glassfish.org/CONTRIBUTING.html`) — A variety of {productName}
+  community channels for various interests and feedback
+
+  * https://accounts.eclipse.org/mailing-list/glassfish-dev[{productName} Mailing List]
+    (`https://accounts.eclipse.org/mailing-list/glassfish-dev`) — Subscribe to the {productName} Developer Mailing List `glassfish-dev`
+
+* https://github.com/eclipse-ee4j/glassfish/issues[GlassFish Issue tracker]
+  (`https://github.com/eclipse-ee4j/glassfish/issues`) — {productName}
+  project dashboards and issue tracking database
+
+If using {productName} in production, it's strongly recommended contacting companies that specialize on professional support for it. These companies are listed at:
+
+* https://glassfish.org/support.html[Professional Services and Support for {productName}] (`https://glassfish.org/support.html`)
+
+[[additional-resources]]
+
+=== Additional Resources
+
+Useful information can be found at the following locations:
+
+* https://glassfish.org/CONTRIBUTING.html[{productName} Community]
+(`https://glassfish.org/CONTRIBUTING.html`)
+
+* https://glassfish.org[{productName} page]
+(`https://glassfish.org`)
+
+* https://projects.eclipse.org/projects/ee4j.glassfish[{productName} project page]
+(`https://projects.eclipse.org/projects/ee4j.glassfish`)
+
+

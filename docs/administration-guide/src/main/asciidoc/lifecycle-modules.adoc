@@ -1,0 +1,215 @@
+title=Administering Life Cycle Modules
+next=batch.adoc
+prev=monitoring.adoc
+~~~~~~
+
+= Administering Life Cycle Modules
+
+[[administering-life-cycle-modules]]
+== 9 Administering Life Cycle Modules
+
+This chapter provides procedures for administering life cycle modules in
+the {productName} {product-majorVersion} environment.
+
+The following topics are addressed here:
+
+* <<About Life Cycle Modules>>
+* <<Configuring Life Cycle Modules>>
+
+Instructions for accomplishing the tasks in this chapter by using the
+Administration Console are contained in the Administration Console
+online help.
+
+[[about-life-cycle-modules]]
+
+=== About Life Cycle Modules
+
+Life cycle modules, also known as initialization services, provide a
+means of running short or long duration Java-based tasks within the
+{productName} environment. These modules are automatically initiated
+at server startup and are notified at various phases of the server life
+cycle. Configured properties for a life cycle module are passed as
+properties during server initialization.
+
+All life cycle module classes and interfaces are in the
+as-install``/modules/glassfish-api.jar`` file.
+
+A life cycle module listens for and performs its tasks in response to
+the following {productName} sequence of events:
+
+1. Initialization. The server reads the configuration, initializes
+built-in subsystems (such as security and logging services), and creates
+the containers.
+2. Startup. The server loads and initializes deployed applications.
+3. Ready. The server begins servicing requests.
+4. Shutdown. The server shuts down the applications and stops.
+5. Termination. The server closes the containers, the built-in
+subsystems, and the server runtime environment.
+
+These events are defined in the `LifecycleEvent` class. For information
+on creating life cycle modules, see "xref:application-development-guide.adoc#developing-lifecycle-listeners[Developing
+Lifecycle Listeners]" in {productName}
+Application Development Guide.
+
+
+[NOTE]
+====
+If the `is-failure-fatal` setting is set to true (the default is false),
+life cycle module failure prevents server initialization or startup, but
+not shutdown or termination.
+====
+
+
+[[configuring-life-cycle-modules]]
+
+=== Configuring Life Cycle Modules
+
+The following topics are addressed here:
+
+* <<To Create a Life Cycle Module>>
+* <<To List Life Cycle Modules>>
+* <<To Update a Life Cycle Module>>
+* <<To Delete a Life Cycle Module>>
+
+[[to-create-a-life-cycle-module]]
+
+==== To Create a Life Cycle Module
+
+Use the `create-lifecycle-module` subcommand in remote mode to create a
+life cycle module.
+
+1. Ensure that the server is running. Remote subcommands require a running server.
+2. Create a new life cycle modules by using the
+xref:reference-manual.adoc#create-lifecycle-module[`create-lifecycle-module`] subcommand.
++
+Information about options and properties for the subcommand are included
+in this help page.
+3. Restart the server for your changes to take effect.
++
+See xref:domains.adoc#to-restart-a-domain[To Restart a Domain].
+
+[[giuyo]]
+Example 9-1 Creating a Life Cycle Module
+
+This example creates the `customSetup` life cycle module :
+
+[source]
+----
+asadmin> create-lifecycle-module --classname "com.acme.CustomSetup"
+--classpath "/export/customSetup" --loadorder 1 --failurefatal=true
+--description "this is a sample customSetup"
+--property rmi="Server\=acme1\:7070":timeout=30 customSetup
+Command create-lifecycle-module executed successfully
+----
+
+See Also
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help create-lifecycle-module` at the command line.
+
+[[to-list-life-cycle-modules]]
+
+==== To List Life Cycle Modules
+
+Use the `list-lifecycle-modules` subcommand in remote mode to list the
+existing life cycle modules.
+
+1. Ensure that the server is running. Remote subcommands require a running server.
+2. List life cycle modules by using the
+xref:reference-manual.adoc#list-lifecycle-modules[`list-lifecycle-modules`] subcommand.
+
+[[giuyr]]
+Example 9-2 Listing Life Cycle Modules
+
+This example lists the existing life cycle modules.
+
+[source]
+----
+asadmin> list-lifecycle-modules
+WSTCPConnectorLCModule
+Command list-lifecycle-modules executed successfully
+----
+
+See Also
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help list-lifecycle-modules` at the command line.
+
+[[to-update-a-life-cycle-module]]
+
+==== To Update a Life Cycle Module
+
+Use the `set` subcommand to update an existing life cycle module.
+
+1. List the properties that can be updated for a life cycle module by
+using the xref:reference-manual.adoc#get[`get`] subcommand.
++
+For example (single mode):
++
+[source]
+----
+asadmin get "*" | grep sampleLCM
+applications.application.sampleLCMmodule.availability-enabled=false
+applications.application.sampleLCMmodule.directory-deployed=false
+applications.application.sampleLCMmodule.enabled=true
+applications.application.sampleLCMmodule.name=sampleLCMmodule
+applications.application.sampleLCMmodule.object-type=user
+applications.application.sampleLCMmodule.property.class-name=example.lc.SampleModule
+applications.application.sampleLCMmodule.property.classpath=/build/lcm.jar
+applications.application.sampleLCMmodule.property.is-failure-fatal=false
+applications.application.sampleLCMmodule.property.isLifecycle=true
+----
+2. Update a life cycle module by using the xref:reference-manual.adoc#set[`set`]
+subcommand.
+3. Restart the server for your changes to take effect.
++
+See xref:domains.adoc#to-restart-a-domain[To Restart a Domain].
+
+[[giuyq]]
+Example 9-3 Updating a Life Cycle Module
+
+This example updates the `classpath` property.
+
+[source]
+----
+sadmin> set applications.application.sampleLCMmodule.
+property.classpath=/build/lcm_new.jarapplications.application.
+sampleLCMmodule.property.classpath=/build/lcm_new.jar
+Command set executed successfully.
+----
+
+See Also
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help set` at the command line.
+
+[[to-delete-a-life-cycle-module]]
+
+==== To Delete a Life Cycle Module
+
+Use the `delete-lifecycle-module` subcommand in remote mode to delete a
+life cycle module.
+
+1. Ensure that the server is running. Remote subcommands require a running server.
+2. List the current life cycle modules by using the
+xref:reference-manual.adoc#list-lifecycle-modules[`list-lifecycle-modules`] subcommand.
+3. Delete a life cycle module by using the
+xref:reference-manual.adoc#delete-lifecycle-module[`delete-lifecycle-module`] subcommand.
+
+[[giuyi]]
+Example 9-4 Deleting a Life Cycle Module
+
+This example deletes the `customSetup` life cycle module.
+
+[source]
+----
+asadmin> delete-lifecycle-module customSetup
+Command delete-lifecycle-module executed successfully
+----
+
+See Also
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help delete-lifecycle-module` at the command line.
+
+

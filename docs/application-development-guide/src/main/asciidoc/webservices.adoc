@@ -1,0 +1,248 @@
+type=page
+status=published
+title=Developing Web Services
+next=jpa.html
+prev=securing-apps.html
+~~~~~~
+
+= Developing Web Services
+
+[[developing-web-services]]
+== Developing Web Services
+
+This chapter describes {productName} support for web services.
+The following topics are addressed here:
+
+* xref:#creating-portable-web-service-artifacts[Creating Portable Web Service Artifacts]
+* xref:#deploying-a-web-service[Deploying a Web Service]
+* xref:#the-web-service-uri-wsdl-file-and-test-page[The Web Service URI, WSDL File, and Test Page]
+* xref:#the-databinding-provider[The Databinding Provider]
+
+
+[NOTE]
+====
+If you installed the Web Profile, web services are not supported.
+Without the Metro add-on component, a servlet or
+EJB component cannot be a web service endpoint, and the
+`glassfish-web.xml` and `glassfish-ejb-jar.xml` elements related to web
+services are ignored.
+
+In addition, the as-install``/modules/webservices-osgi.jar`` and
+as-install``/modules/webservices-api-osgi.jar`` files must be in
+the classpath of your web services application. IDEs such as NetBeans
+and Eclipse do this automatically.
+====
+
+
+"https://eclipse-ee4j.github.io/jakartaee-tutorial/#web-services[Web Services]"
+in The Jakarta EE Tutorial shows how to deploy simple web services to
+{productName}.
+
+For additional information about JAXB (Java Architecture for XML Binding), see
+http://jcp.org/aboutJava/communityprocess/pfd/jsr222/index.html[Java
+Specification Request (JSR) 222] and xref:#the-databinding-provider[The Databinding Provider].
+
+For additional information about JAX-WS (Java API for XML-Based Web Services), see
+http://jcp.org/aboutJava/communityprocess/pfd/jsr224/index.html[Java
+Specification Request (JSR) 224] and
+http://jcp.org/en/jsr/detail?id=109[Java Specification Request (JSR) 109].
+
+For information about web services security, see
+xref:securing-apps.adoc#configuring-message-security-for-web-services[Configuring Message Security for Web Services].
+
+The Fast Infoset standard specifies a binary format based on the XML Information Set.
+This format is an efficient alternative to XML.
+For more information about using Fast Infoset,
+see the https://eclipse-ee4j.github.io/metro-wsit/3.0.0/guide/ch02.html#using-fastinfoset[
+Metro WSIT Guide]
+
+
+[[creating-portable-web-service-artifacts]]
+
+=== Creating Portable Web Service Artifacts
+
+For a tutorial that shows how to use the `wsimport` and `wsgen`
+commands, see "https://eclipse-ee4j.github.io/jakartaee-tutorial/#web-services[
+Web Services]" in The Jakarta EE Tutorial.
+
+[[deploying-a-web-service]]
+
+=== Deploying a Web Service
+
+You deploy a web service endpoint to the {productName} just as you
+would any servlet, stateless session bean (SLSB), or application.
+
+
+[NOTE]
+====
+For complex services with dependent classes, user specified WSDL files,
+or other advanced features, autodeployment of an annotated file is not
+sufficient.
+====
+
+
+The {productName} deployment descriptor files `glassfish-web.xml` and
+`glassfish-ejb-jar.xml` provide optional web service enhancements in the
+`webservice-endpoint` and `webservice-description` elements, including a
+`debugging-enabled` subelement that enables the creation of a test page.
+The test page feature is enabled by default and described in
+xref:#the-web-service-uri-wsdl-file-and-test-page[The Web Service URI, WSDL File, and Test Page].
+
+For more information about deployment, autodeployment, and deployment
+descriptors, see the xref:application-deployment-guide.adoc#GSDPG[
+{productName} Application Deployment Guide].
+For more information about the
+`asadmin deploy` command, see the xref:reference-manual.adoc#GSRFM[
+{productName} Reference Manual].
+
+[[the-web-service-uri-wsdl-file-and-test-page]]
+
+=== The Web Service URI, WSDL File, and Test Page
+
+Clients can run a deployed web service by accessing its service endpoint
+address URI, which has the following format:
+
+[source]
+----
+http://host:port/context-root/servlet-mapping-url-pattern
+----
+
+The context-root is defined in the `application.xml` or `web.xml` file,
+and can be overridden in the `glassfish-application.xml` or
+`glassfish-web.xml` file. The servlet-mapping-url-pattern is defined in
+the `web.xml` file.
+
+In the following example, the context-root is `my-ws` and the
+servlet-mapping-url-pattern is `/simple`:
+
+[source]
+----
+http://localhost:8080/my-ws/simple
+----
+
+You can view the WSDL file of the deployed service in a browser by
+adding `?WSDL` to the end of the URI. For example:
+
+[source]
+----
+http://localhost:8080/my-ws/simple?WSDL
+----
+
+For debugging, you can run a test page for the deployed service in a
+browser by adding `?Tester` to the end of the URL. For example:
+
+[source]
+----
+http://localhost:8080/my-ws/simple?Tester
+----
+
+You can also test a service using the Administration Console. Open the
+Web Services component, select the web service in the listing on the
+General tab, and select Test. For details, click the Help button in the
+Administration Console.
+
+
+[NOTE]
+====
+The test page works only for WS-I compliant web services. This means
+that the tester servlet does not work for services with WSDL files that
+use RPC/encoded binding.
+====
+
+
+Generation of the test page is enabled by default. You can disable the
+test page for a web service by setting the value of the
+`debugging-enabled` element in the `glassfish-web.xml` and
+`glassfish-ejb-jar.xml` deployment descriptor to `false`. For more
+information, see the xref:application-deployment-guide.adoc#GSDPG[{productName}
+Application Deployment Guide].
+
+[[the-databinding-provider]]
+
+=== The Databinding Provider
+
+The JAX-WS reference implementation (RI) used to be dependent on the
+JAXB RI for databinding. JAXB and JAX-WS implementations have been
+decoupled, and databinding is modular. JAXB and JAX-WS are no longer
+Jakarta EE APIs.
+
+The EclipseLink JAXB implementation, plus EclipseLink extensions, is
+called MOXy. The `org.eclipse.persistence.moxy.jar` file is bundled with
+{productName}, which supports the JAXB RI and MOXy as databinding
+providers.
+
+To specify the databinding provider for the JVM, set the
+`com.sun.xml.ws.spi.db.BindingContextFactory` JVM property to one of the
+following values:
+
+com.sun.xml.ws.db.glassfish.JAXBRIContextFactory::
+  Specifies the JAXB reference implementation. This is the default.
+com.sun.xml.ws.db.toplink.JAXBContextFactory::
+  Specifies Eclipselink MOXy JAXB binding.
+
+For example:
+
+[source]
+----
+asadmin create-jvm-options -Dcom.sun.xml.ws.spi.db.BindingContextFactory=com.sun.xml.ws.db.toplink.JAXBContextFactory
+----
+
+To specify the databinding provider for a web service endpoint:
+
+* Set the `org.jvnet.ws.databinding.DatabindingModeFeature` feature
+during `WebServiceFeature` initialization or using the `add` method.
+Allowed values are as follows:::
+org.jvnet.ws.databinding.DatabindingModeFeature.GLASSFISH_JAXB::
+  Specifies the JAXB reference implementation. This is the default.
+com.sun.xml.ws.db.toplink.JAXBContextFactory.ECLIPSELINK_JAXB::
+  Specifies Eclipselink MOXy JAXB binding.
++
+For example:
++
+[source,java]
+----
+import jakarta.xml.ws.WebServiceFeature;
+import org.jvnet.ws.databinding.DatabindingModeFeature;
+import com.sun.xml.ws.db.toplink.JAXBContextFactory;
+...
+WebServiceFeature[] features = {new DatabindingModeFeature(JAXBContextFactory.ECLIPSELINK_JAXB)};
+...
+----
+* Set the `org.jvnet.ws.databinding.DatabindingModeFeature` feature
+using the `@DatabindingMode` annotation. For example:
++
+[source,java]
+----
+import jakarta.jws.WebService;
+import org.jvnet.ws.databinding.DatabindingMode;
+import com.sun.xml.ws.db.toplink.JAXBContextFactory;
+...
+@WebService()
+@DatabindingMode(JAXBContextFactory.ECLIPSELINK_JAXB);
+...
+----
+* Set the `databinding` attribute of the `endpoint` element in the
+`sun-jaxws.xml` file. Allowed values are `glassfish.jaxb` or
+`eclipselink.jaxb`. For example:
++
+[source,xml]
+----
+<endpoint name='hello'
+  implementation='hello.HelloImpl'
+  url-pattern='/hello'
+  databinding='eclipselink.jaxb'
+/>
+----
+
+The EclipseLink JAXB compiler is not included but can be used with
+{productName}. Download the EclipseLink zip file at
+`http://www.eclipse.org/eclipselink/downloads/` and unzip it. The
+compiler files are located here:
+
+[source]
+----
+bin/jaxb-compiler.cmd
+bin/jaxb-compiler.sh
+----
+
+

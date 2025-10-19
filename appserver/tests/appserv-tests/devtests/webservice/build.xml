@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+
+    Copyright (c) 2017, 2018 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<!DOCTYPE project [
+<!ENTITY commonSetup SYSTEM "file:./../../config/properties.xml">
+<!ENTITY commonBuild SYSTEM "file:./../../config/common.xml">
+<!ENTITY reporting   SYSTEM "file:./report.xml">
+]>
+
+<project name="webservice" default="usage" basedir=".">
+
+    &commonSetup;
+    &commonBuild;
+    &reporting;
+
+    <target name="all" xmlns:if="ant:if" xmlns:unless="ant:unless">
+    	<echo message="@@## Running webservice developer tests ##@@" />
+        <echo unless:set="env.webservice" message="@@## Set environment variable 'webservice' to name of single test dir to run only that one. ##@@${line.separator}" />
+        <echo if:set="env.webservice" message="@@## environment variable 'webservice' set. Running only ${env.webservice}  ##@@${line.separator}" />
+    	
+        <delete file="${env.APS_HOME}/test_results.html"/>
+        <delete file="${env.APS_HOME}/test_resultsValid.xml"/>
+        <delete file="${env.APS_HOME}/test_results.xml"/>
+        <delete dir="${env.APS_HOME}/build/module"/>
+        
+    	<record name="webservice.output" action="start" />
+        
+    	<run-webservice-test path="filter_urlhandling"/>
+    	<run-webservice-test path="annotations"/>
+    	<run-webservice-test path="ejb_annotations"/>
+        <run-webservice-test path="gf_dd/endpoint_address_uri"/>
+        
+    	<record name="webservice.output" action="stop" />
+        
+    	<antcall target="report"/>
+        <antcall target="dev-report"/>
+    </target>
+
+    <target name="clean">
+        <delete>
+            <fileset dir="${basedir}" includes="**.output, count.txt"/>
+        </delete>
+        <ant dir="google" target="clean"/>
+        <ant dir="xsdany" target="clean"/>
+        <ant dir="mapping/j2w/signature" target="clean"/>
+        <ant dir="webstub_properties" target="clean"/>
+        <ant dir="filter_urlhandling" target="clean"/>
+     </target>
+
+    <target name="usage">
+        <echo>
+                Usage:
+                        ant all (Executes all the webservice tests)
+
+                        ant google (Executes the google tests)
+                        ant xsdany (Executes the xsdany tests)
+        </echo>
+    </target>
+	
+	<macrodef name="run-webservice-test" xmlns:if="ant:if" xmlns:unless="ant:unless">
+	        <attribute name="path" />
+	        <sequential>
+	            <local name="do-run-test" />
+	            <condition property="do-run-test" else="false">
+	                <or>
+	                    <equals arg1="${env.webservice}" arg2="@{path}" />
+	                    <not>
+	                        <isset property="env.webservice" />
+	                    </not>
+	                </or>
+	            </condition>
+
+	            <sequential if:true="${do-run-test}">
+	                <local name="absolute.path" />
+	                <property name="absolute.path" location="@{path}" />
+	                <echo message="${line.separator}" />
+	                <echo message=" *************************" />
+	                <echo message=" * Running @{path} " />
+	                <echo message=" * Path: ${absolute.path} " />
+	                <echo message=" *************************" />
+	                <echo message="${line.separator}" />
+	                <ant dir="@{path}" target="all" />
+	            </sequential>
+	        </sequential>
+	    </macrodef>
+
+</project>

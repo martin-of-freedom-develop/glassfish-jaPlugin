@@ -1,0 +1,81 @@
+type=page
+status=published
+title=list-containers
+next=list-context-services.html
+prev=list-connector-work-security-maps.html
+~~~~~~
+
+= list-containers
+
+[[list-containers]]
+
+== list-containers
+
+Lists application containers
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-containers [--help]
+----
+
+=== Description
+
+The `list-containers` subcommand displays a list of application
+containers.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Examples
+
+[[sthref1442]]
+
+==== Example 1   Listing the Application Containers
+
+This example lists the current application containers.
+
+[source]
+----
+asadmin> list-containers
+List all known application containers
+Container : grizzly
+Container : ejb
+Container : webservices
+Container : ear
+Container : appclient
+Container : connector
+Container : jpa
+Container : web
+Container : osgi
+Container : security
+Container : webbeans
+
+Command list-containers executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:list-commands.adoc#list-commands[`list-commands`(1)],
+xref:list-components.adoc#list-components[`list-components`(1)],
+xref:list-modules.adoc#list-modules[`list-modules`(1)]
+
+

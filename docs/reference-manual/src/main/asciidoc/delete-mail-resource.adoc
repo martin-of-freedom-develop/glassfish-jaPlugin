@@ -1,0 +1,88 @@
+type=page
+status=published
+title=delete-mail-resource
+next=delete-managed-executor-service.html
+prev=delete-local-instance.html
+~~~~~~
+
+= delete-mail-resource
+
+[[delete-mail-resource]]
+
+== delete-mail-resource
+
+Removes a Jakarta Mail session resource
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] delete-mail-resource [--help]
+[--target target] jndi_name
+----
+
+=== Description
+
+The `delete-mail-resource` subcommand removes the specified Jakarta Mail
+session resource. Ensure that you remove all references to this resource
+before running this subcommand.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  This option specifies the target from which you are deleting the
+  Jakarta Mail session resource. Valid values are:
+
+  `server`;;
+    Deletes the resource from the default server instance. This is the
+    default value.
+  `domain`;;
+    Deletes the resource from the domain.
+  cluster_name;;
+    Deletes the resource from every server instance in the cluster.
+  instance_name;;
+    Deletes the resource from a particular server instance.
+
+=== Operands
+
+jndi_name::
+  The JNDI name of the Jakarta Mail session resource to be deleted.
+
+=== Examples
+
+[[sthref774]]
+
+==== Example 1   Deleting a Jakarta Mail Resource
+
+This example deletes the Jakarta Mail session resource named
+`mail/MyMailSession`.
+
+[source]
+----
+asadmin> delete-mail-resource mail/MyMailSession
+Command delete-mail-resource executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-mail-resource.adoc#create-mail-resource[`create-mail-resource`(1)],
+xref:list-mail-resources.adoc#list-mail-resources[`list-mail-resources`(1)]
+
+

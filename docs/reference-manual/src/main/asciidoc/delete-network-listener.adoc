@@ -1,0 +1,88 @@
+type=page
+status=published
+title=delete-network-listener
+next=delete-node-config.html
+prev=delete-module-config.html
+~~~~~~
+
+= delete-network-listener
+
+[[delete-network-listener]]
+
+== delete-network-listener
+
+Removes a network listener
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] delete-network-listener [--help]
+[--target target]
+listener-name
+----
+
+=== Description
+
+The `delete-network-listener` subcommand removes the specified network
+listener. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  Deletes the network listener only from the specified target. Valid
+  values are as follows:
+
+  `server`;;
+    Deletes the network listener from the default server instance. This
+    is the default value.
+  configuration-name;;
+    Deletes the network listener from the specified configuration.
+  cluster-name;;
+    Deletes the network listener from all server instances in the
+    specified cluster.
+  standalone-instance-name;;
+    Deletes the network listener from the specified standalone server
+    instance.
+
+=== Operands
+
+listener-name::
+  The name of the network listener to be deleted.
+
+=== Examples
+
+[[sthref895]]
+
+==== Example 1   Deleting a Network Listener
+
+The following command deletes the network listener named
+`sampleListener`:
+
+[source]
+----
+asadmin> delete-network-listener sampleListener
+Command delete-network-listener executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-network-listener.adoc#create-network-listener[`create-network-listener`(1)],
+xref:list-network-listeners.adoc#list-network-listeners[`list-network-listeners`(1)]
+
+

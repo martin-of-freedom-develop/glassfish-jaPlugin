@@ -1,0 +1,96 @@
+type=page
+status=published
+title=list-libraries
+next=list-lifecycle-modules.html
+prev=list-jvm-options.html
+~~~~~~
+
+= list-libraries
+
+[[list-libraries]]
+
+== list-libraries
+
+Lists library JAR files on {productName}
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-libraries [--help]
+[--type={common|ext|app}]
+----
+
+=== Description
+
+The `list-libraries` subcommand lists library archive files on
+{productName}.
+
+The `--type` option specifies the library type and the {productName}
+directory for which libraries are to be listed.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--type`::
+  Specifies the library type and the {productName} directory for
+  which libraries are listed. Valid values are as follows:
++
+--
+  `common`;;
+    Lists the library files for the Common class loader directory,
+    domain-dir``/lib``. This is the default.
+  `ext`;;
+    Lists the library files for the Java optional package directory,
+    domain-dir``/lib/ext``.
+  `app`;;
+    Lists the library files for the application-specific class loader
+    directory, domain-dir``/lib/applibs``.
+--
++
+For more information about these directories, see
+  "xref:application-development-guide.adoc#class-loaders[Class Loaders]" in {productName} Application Development Guide.
+
+=== Examples
+
+[[sthref1619]]
+
+==== Example 1   Listing Libraries
+
+This example lists the libraries in the application-specific class
+loader directory on the default server instance.
+
+[source]
+----
+asadmin> list-libraries --type app
+mylib.jar
+xlib.jar
+ylib.jar
+zlib.jar
+Command list-libraries executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:add-library.adoc#add-library[`add-library`(1)],
+xref:remove-library.adoc#remove-library[`remove-library`(1)]
+
+"xref:application-development-guide.adoc#class-loaders[Class Loaders]" in {productName} Application Development Guide
+
+

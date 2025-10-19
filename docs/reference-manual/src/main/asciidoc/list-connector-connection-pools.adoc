@@ -1,0 +1,69 @@
+type=page
+status=published
+title=list-connector-connection-pools
+next=list-connector-resources.html
+prev=list-configs.html
+~~~~~~
+
+= list-connector-connection-pools
+
+[[list-connector-connection-pools]]
+
+== list-connector-connection-pools
+
+Lists the existing connector connection pools
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-connector-connection-pools [--help]
+----
+
+=== Description
+
+The `list-connector-connection-pools` subcommand list connector
+connection pools that have been created.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Examples
+
+[[sthref1411]]
+
+==== Example 1   Listing the Connector Connection Pools
+
+This example lists the existing connector connection pools.
+
+[source]
+----
+asadmin> list-connector-connection-pools
+jms/qConnPool
+Command list-connector-connection-pools executed successfully
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-connector-connection-pool.adoc#create-connector-connection-pool[`create-connector-connection-pool`(1)],
+xref:delete-connector-connection-pool.adoc#delete-connector-connection-pool[`delete-connector-connection-pool`(1)],
+xref:ping-connection-pool.adoc#ping-connection-pool[`ping-connection-pool`(1)]
+
+

@@ -1,0 +1,16 @@
+title=List of Figures
+next=lot.adoc
+prev=loe.adoc
+~~~~~~
+
+= List of Figures
+
+[[list-of-figures]]
+== List of Figures
+
+* xref:general-administration.adoc#gjjce[2-1 Web Page for the REST
+Resource for Managing a Domain]
+* xref:general-administration.adoc#gkwku[2-2 Web Page for the REST
+Resource That Provides Class Loader Statistics]
+
+

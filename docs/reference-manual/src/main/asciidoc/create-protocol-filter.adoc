@@ -1,0 +1,96 @@
+type=page
+status=published
+title=create-protocol-filter
+next=create-protocol-finder.html
+prev=create-protocol.html
+~~~~~~
+
+= create-protocol-filter
+
+[[create-protocol-filter]]
+
+== create-protocol-filter
+
+Adds a new protocol filter
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] create-protocol-filter [--help]
+--protocol protocol-name
+--classname class-name
+[--target server]
+protocol-filter-name
+----
+
+=== Description
+
+The `create-protocol-filter` subcommand creates a protocol filter for a
+protocol. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--protocol`::
+  The name of the associated protocol.
+`--classname`::
+  The fully qualified name of the Java class that implements the
+  protocol filter.
+`--target`::
+  Creates the protocol filter only on the specified target. Valid values
+  are as follows:
+
+  `server`;;
+    Creates the protocol filter on the default server instance. This is
+    the default value.
+  configuration-name;;
+    Creates the protocol filter in the specified configuration.
+  cluster-name;;
+    Creates the protocol filter on all server instances in the specified
+    cluster.
+  standalone-instance-name;;
+    Creates the protocol filter on the specified standalone server
+    instance.
+
+=== Operands
+
+protocol-filter-name::
+  The name of the protocol filter.
+
+=== Examples
+
+[[sthref502]]
+
+==== Example 1   Creating a Protocol Filter
+
+The following command creates a protocol filter named `http1-filter`:
+
+[source]
+----
+asadmin> create-protocol-filter --protocol http1
+--classname com.company22.MyProtocolFilter http1-filter
+Command create-protocol-filter executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-protocol.adoc#create-protocol[`create-protocol`(1)],
+xref:delete-protocol-filter.adoc#delete-protocol-filter[`delete-protocol-filter`(1)],
+xref:list-protocol-filters.adoc#list-protocol-filters[`list-protocol-filters`(1)]
+
+

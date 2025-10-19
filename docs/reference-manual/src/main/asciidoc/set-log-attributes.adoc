@@ -1,0 +1,103 @@
+type=page
+status=published
+title=set-log-attributes
+next=set-log-file-format.html
+prev=set-batch-runtime-configuration.html
+~~~~~~
+
+= set-log-attributes
+
+[[set-log-attributes]]
+
+== set-log-attributes
+
+Sets the logging attributes for one or more loggers
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] set-log-attributes [--help]
+[--target=target]
+attribute-name=attribute-value[:attribute-name=attribute-value]*
+----
+
+=== Description
+
+The `set-log-attributes` subcommand sets logging attributes for one or
+more handlers or formatters. The attributes you can set correspond
+to the attributes that are available in the `logging.properties` file
+for the domain.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  The server domain, instance, or cluster for which logger attributes
+  will be set. If this option is omitted, attributes are set for the
+  default server.
+
+=== Operands
+
+target::
+  Valid values are:
+  * server_name - Default target is `server`. If no target is specified
+    then log attributes are set for the server.
+  * cluster_name - The name of a target cluster.
+  * instance_name - The name of a target server instance.
+attribute-name::
+  The fully scoped name of the logging attribute. The
+  `list-log-attributes` subcommand can be used to list the names of all
+  currently defined attributes.
+attribute-value::
+  The value to apply to the specified attribute. +
+  Refer to "xref:administration-guide.adoc#administering-the-logging-service[Administering the Logging Service]" in
+  {productName} Administration Guide for complete explanations of supported attribute values.
+  Use xref:list-log-attributes.adoc#list-log-attributes[`list-log-attributes`(1)] to get
+  current set of attributes.
+
+=== Examples
+
+[[sthref2046]]
+
+==== Example 1   Setting the Maximum Number of Log History Files to Maintain
+
+This example sets to 8 the maximum number of log history files for the server as a whole.
+
+[source]
+----
+asadmin set-log-attributes --target=server \
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles=8
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles logging attribute value set to 8.
+The logging attributes are saved successfully for server.
+
+Command set-log-attributes executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+xref:collect-log-files.adoc#collect-log-files[`collect-log-files`(1)],
+xref:list-log-attributes.adoc#list-log-attributes[`list-log-attributes`(1)],
+xref:list-log-levels.adoc#list-log-levels[`list-log-levels`(1)],
+xref:rotate-log.adoc#rotate-log[`rotate-log`(1)],
+xref:set-log-levels.adoc#set-log-levels[`set-log-levels`(1)]
+
+"xref:administration-guide.adoc#administering-the-logging-service[Administering the Logging Service]" in {productName} Administration Guide
+
+

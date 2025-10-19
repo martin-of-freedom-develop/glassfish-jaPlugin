@@ -1,0 +1,19 @@
+type=page
+status=published
+title=List of Tables
+next=title.html
+prev=toc.html
+~~~~~~
+
+= List of Tables
+
+[[list-of-tables]]
+== List of Tables
+
+* xref:installing.adoc#ghtqe[1-1 {productName} {product-majorVersion} Installation
+Methods]
+* xref:installing.adoc#gkuap[1-2 {productName} Full Profile and Web
+Profile Features]
+* xref:installing.adoc#gkbac[1-3 {productName} Downloadable ZIP Files]
+
+

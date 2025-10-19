@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2023 Contributors to the Eclipse Foundation.
+    Copyright (c) 1997, 2021 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.admin</groupId>
+        <artifactId>nucleus-admin</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>server-mgmt</artifactId>
+    <packaging>glassfish-jar</packaging>
+
+    <name>admin-server-management</name>
+    <description>Server Management</description>
+
+    <properties>
+        <winsw.version>2.12.0</winsw.version>
+        <winsw.url>https://github.com/winsw/winsw/releases/download/v${winsw.version}/WinSW.NET461.exe</winsw.url>
+
+        <!-- We don't need it here and it would fail -->
+        <glassfish.generate-injectors.skip>true</glassfish.generate-injectors.skip>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-osgi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.glassfish.main.common</groupId>
+            <artifactId>glassfish-jdk-extensions</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.admin</groupId>
+            <artifactId>admin-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.admin</groupId>
+            <artifactId>admin-cli</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.annotations</groupId>
+            <artifactId>logging-annotation-processor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.properties</include>
+                    <include>**/*.xml</include>
+                </includes>
+            </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.template</include>
+                    <include>**/*.properties</include>
+                    <include>**/*.xsd</include>
+                </includes>
+            </resource>
+        </resources>
+        <plugins>
+            <!-- XXX: no maven plugin for jakarta xml binding impl exists, so we have to stick with Ant and attach source
+                root to the build ourselves... -->
+            <plugin>
+                <groupId>io.github.download-maven-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>download-winsw</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <skip>false</skip>
+                            <url>${winsw.url}</url>
+                            <overwrite>true</overwrite>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${jakarta.jaxb-impl.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>xjc</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask" />
+                                <property name="dest"
+                                    location="${project.build.directory}/generated-sources/xjc" />
+                                <mkdir dir="${dest}" />
+                                <xjc destdir="${dest}"
+                                    schema="${project.basedir}/src/main/resources/xsd/schema/template-info.xsd"
+                                    package="com.sun.enterprise.admin.servermgmt.xml.templateinfo">
+                                    <jvmarg value="-Dfile.encoding=${project.build.sourceEncoding}" />
+                                </xjc>
+                                <xjc destdir="${dest}"
+                                    schema="${project.basedir}/src/main/resources/xsd/schema/domain-info.xsd"
+                                    package="com.sun.enterprise.admin.servermgmt.xml.domaininfo">
+                                    <jvmarg value="-Dfile.encoding=${project.build.sourceEncoding}" />
+                                </xjc>
+                                <xjc destdir="${dest}"
+                                    schema="${project.basedir}/src/main/resources/xsd/schema/stringsubs.xsd"
+                                    package="com.sun.enterprise.admin.servermgmt.xml.stringsubs">
+                                    <jvmarg value="-Dfile.encoding=${project.build.sourceEncoding}" />
+                                </xjc>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>prepare-winsw</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <move todir="${project.build.directory}/classes/lib">
+                                    <fileset dir="${project.build.directory}" casesensitive="false">
+                                        <include name="WinSW*461.exe" />
+                                    </fileset>
+                                    <mapper type="glob" from="WinSW*461.exe" to="winsw.exe" />
+                                </move>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/xjc</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            com.sun.enterprise.admin.servermgmt,
+                            com.sun.enterprise.admin.servermgmt.pe,
+                            com.sun.enterprise.admin.servermgmt.services,
+                            com.sun.enterprise.admin.servermgmt.util
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <copy.modules.to.distribution.skip>false</copy.modules.to.distribution.skip>
+                <copy.modules.to.distribution.destFile>${basedir}/../../..//${glassfish.distribution.dir}/lib/asadmin/server-mgmt.jar </copy.modules.to.distribution.destFile>
+            </properties>
+        </profile>
+    </profiles>
+</project>

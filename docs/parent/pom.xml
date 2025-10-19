@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 2017, 2021 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.glassfish.main.docs</groupId>
+        <artifactId>docs</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>documentation-generators-parent</artifactId>
+    <packaging>pom</packaging>
+    <name>Eclipse GlassFish Documentation parent pom</name>
+
+    <properties>
+        <maven.site.skip>true</maven.site.skip>
+        <asciidoctor.maven.plugin.version>3.2.0</asciidoctor.maven.plugin.version>
+        <asciidoctorj.pdf.version>2.3.19</asciidoctorj.pdf.version>
+        <!-- status: DRAFT, BETA, etc., or blank for final -->
+        <status>DRAFT</status>
+        <productName>Eclipse GlassFish</productName>
+        <pdf.fileName>${project.artifactId}.pdf</pdf.fileName>
+        <pdf.toclevels>3</pdf.toclevels>
+        <pdf.rel.file.prefix>https://glassfish.org/docs/latest/</pdf.rel.file.prefix>
+        <html.rel.file.prefix></html.rel.file.prefix>
+        <mq.docs.url>https://eclipse-ee4j.github.io/openmq/guides/</mq.docs.url>
+        <bookDirectory>${project.build.directory}/book</bookDirectory>
+        <product.currentVersion>${project.version}</product.currentVersion>
+    </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>default-deploy</id>
+                            <phase>disabled</phase>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.glassfish.doc</groupId>
+                <artifactId>glassfish-doc-maven-plugin</artifactId>
+                <version>1.3</version>
+                <configuration>
+                    <sourceDirectory>src/main/asciidoc</sourceDirectory>
+                </configuration>
+                <executions>
+                    <!-- Filtering - uses properties directly -->
+                    <execution>
+                        <id>generate-book</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>book</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>${asciidoctor.maven.plugin.version}</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctorj-pdf</artifactId>
+                        <version>${asciidoctorj.pdf.version}</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <enableVerbose>true</enableVerbose>
+                    <logHandler>
+                        <failIf>
+                            <severity>INFO</severity>
+                        </failIf>
+                    </logHandler>
+                    <attributes>
+                        <status>${status}</status>
+                        <data-uri />
+                        <icons>font</icons>
+                        <source-highlighter>coderay</source-highlighter>
+                        <pagenums />
+                        <sectanchors>true</sectanchors>
+                        <idprefix />
+                        <idseparator>-</idseparator>
+                        <docinfo1>true</docinfo1>
+                        <imagesDir>${basedir}/src/main/asciidoc</imagesDir>
+                        <productName>${productName}</productName>
+
+                    </attributes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-html-doc</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>html</backend>
+                            <sourceDirectory>${bookDirectory}</sourceDirectory>
+                            <sourceDocumentName>book.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/html</outputDirectory>
+                            <outputFile>${project.artifactId}.html</outputFile>
+                            <attributes>
+                                <relfileprefix>${html.rel.file.prefix}</relfileprefix>
+                                <mq-release-notes-url>${mq.docs.url}/mq-release-notes/toc.html</mq-release-notes-url>
+                                <mq-tech-over-url>${mq.docs.url}/mq-tech-over/toc.html</mq-tech-over-url>
+                                <mq-admin-guide-url>${mq.docs.url}/mq-admin-guide/toc.html</mq-admin-guide-url>
+                                <mq-dev-guide-jmx-url>${mq.docs.url}/mq-dev-guide-jmx/toc.html</mq-dev-guide-jmx-url>
+                                <mq-dev-guide-java-url>${mq.docs.url}/mq-dev-guide-java/toc.html</mq-dev-guide-java-url>
+                                <mq-dev-guide-c-url>${mq.docs.url}/mq-dev-guide-c/toc.html</mq-dev-guide-c-url>
+                                <linkcss>true</linkcss>
+                                <toc>left</toc>
+                                <toclevels>3</toclevels>
+                                <embedAssets>false</embedAssets>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-pdf-doc</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <configuration>
+                            <backend>pdf</backend>
+                            <sourceDirectory>${bookDirectory}</sourceDirectory>
+                            <sourceDocumentName>book.adoc</sourceDocumentName>
+                            <outputDirectory>${project.build.directory}/pdf</outputDirectory>
+                            <outputFile>${pdf.fileName}</outputFile>
+                            <attributes>
+                                <relfileprefix>${pdf.rel.file.prefix}</relfileprefix>
+                                <mq-release-notes-url>${mq.docs.url}/mq-release-notes/toc.html</mq-release-notes-url>
+                                <mq-tech-over-url>${mq.docs.url}/mq-tech-over/toc.html</mq-tech-over-url>
+                                <mq-admin-guide-url>${mq.docs.url}/mq-admin-guide/toc.html</mq-admin-guide-url>
+                                <mq-dev-guide-jmx-url>${mq.docs.url}/mq-dev-guide-jmx/toc.html</mq-dev-guide-jmx-url>
+                                <mq-dev-guide-java-url>${mq.docs.url}/mq-dev-guide-java/toc.html</mq-dev-guide-java-url>
+                                <mq-dev-guide-c-url>${mq.docs.url}/mq-dev-guide-c/toc.html</mq-dev-guide-c-url>
+                                 <!-- TODO - sharing themes and other files should be done as a dependency -->
+                                <pdf-stylesdir>${project.basedir}/../parent/src/theme</pdf-stylesdir>
+                                <pdf-style>glassfish</pdf-style>
+                                <doctype>book</doctype>
+                                <toc>preamble</toc>
+                                <toclevels>${pdf.toclevels}</toclevels>
+                                <embedAssets>true</embedAssets>
+                            </attributes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <property name="productMajorVersion" value="${product.majorVersion}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-pdf</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/pdf/${pdf.fileName}</file>
+                                    <type>pdf</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                        <execution>
+                            <id>parse-version</id>
+                            <goals>
+                                <goal>parse-version</goal>
+                            </goals>
+                            <phase>validate</phase>
+                            <configuration>
+                                <propertyPrefix>product</propertyPrefix>
+                            </configuration>
+                        </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <classesDirectory>${project.build.directory}/html</classesDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

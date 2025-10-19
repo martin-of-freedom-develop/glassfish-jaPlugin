@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Copyright (c) 1997, 2021 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main</groupId>
+        <artifactId>glassfish-nucleus-parent</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+    </parent>
+
+    <groupId>org.glassfish.main.distributions</groupId>
+    <artifactId>nucleus-distributions</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Nucleus distributions</name>
+
+    <developers>
+        <developer>
+            <id>snjezana</id>
+            <name>Snjezana Sevo-Zenzerovic</name>
+            <url>http://blogs.sun.com/snjezana</url>
+            <organization>Oracle, Inc.</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>romain_grecourt</id>
+            <name>Romain Grecourt</name>
+            <organization>Oracle, Inc</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>nucleus-common</module>
+        <module>atomic</module>
+        <module>nucleus</module>
+    </modules>
+
+    <properties>
+        <stage.dir.name>stage</stage.dir.name>
+        <stage.dir>${project.build.directory}/${stage.dir.name}</stage.dir>
+        <temp.dir>${project.build.directory}/dependency</temp.dir>
+        <include.group.ids>org.glassfish.main.packager</include.group.ids>
+        <install.dir.name>${nucleus.install.dir.name}</install.dir.name>
+        <glassfishbuild-maven-plugin.assemblyInputDirectory>${stage.dir}</glassfishbuild-maven-plugin.assemblyInputDirectory>
+        <nadmin.executable>${stage.dir}/${nucleus.install.dir.name}/bin/nadmin${file.executable.suffix}</nadmin.executable>
+    </properties>
+
+    <build>
+        <outputDirectory>${temp.dir}</outputDirectory>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <configuration>
+                        <includeEmptyDirs>true</includeEmptyDirs>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.glassfish.build</groupId>
+                    <artifactId>glassfishbuild-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>default-featuresets-dependencies</id>
+                            <phase>process-resources</phase>
+                            <configuration>
+                                <featureSetGroupIdIncludes>org.glassfish.main.featuresets</featureSetGroupIdIncludes>
+                                <stageDirectory>${temp.dir}</stageDirectory>
+                                <excludes>META-INF/**</excludes>
+                                <mappings>
+                                    <mapping>
+                                        <artifactId>org.apache.felix.main</artifactId>
+                                        <name>felix</name>
+                                    </mapping>
+                                </mappings>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>create-artifact</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>single</goal>
+                            </goals>
+                            <configuration>
+                                <descriptors>
+                                    <descriptor>src/main/assembly/${project.artifactId}.xml</descriptor>
+                                </descriptors>
+                                <ignoreMissingDescriptor>false</ignoreMissingDescriptor>
+                                <finalName>${stage.dir.name}</finalName>
+                                <attach>false</attach>
+                                <appendAssemblyId>false</appendAssemblyId>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>create-domain</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>exec</goal>
+                            </goals>
+                            <configuration>
+                                <executable>${nadmin.executable}</executable>
+                                <inheritIo>true</inheritIo>
+                                <arguments>
+                                    <argument>--user</argument>
+                                    <argument>admin</argument>
+                                    <argument>create-domain</argument>
+                                    <argument>--nopassword</argument>
+                                    <argument>--savelogin=true</argument>
+                                    <argument>--checkports=false</argument>
+                                    <argument>--adminport=4848</argument>
+                                    <argument>--instanceport=8080</argument>
+                                    <argument>--keytooloptions</argument>
+                                    <argument>CN=localhost</argument>
+                                    <argument>domain1</argument>
+                                </arguments>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <configuration>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>create-artifact</id>
+                        <!-- All children will execute it, but not us -->
+                        <phase></phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,86 @@
+type=page
+status=published
+title=list-auth-realms
+next=list-backups.html
+prev=list-audit-modules.html
+~~~~~~
+
+= list-auth-realms
+
+[[list-auth-realms]]
+
+== list-auth-realms
+
+Lists the authentication realms
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-auth-realms [--help]
+[target]
+----
+
+=== Description
+
+The `list-auth-realms` subcommand lists the authentication realms. This
+subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  The name of the target for which you want to list the authentication
+  realms.
+
+  `server`;;
+    Lists the realms for the default server instance `server` and is the
+    default value.
+  configuration_name;;
+    Lists the realms for the named configuration.
+  cluster_name;;
+    Lists the realms for every server instance in the cluster.
+  instance_name;;
+    Lists the realms for a particular server instance.
+
+=== Examples
+
+[[sthref1329]]
+
+==== Example 1   Listing authentication realms
+
+[source]
+----
+asadmin> list-auth-realms
+file
+ldap
+certificate
+db
+Command list-auth-realms executed successfully
+----
+
+Where file, ldap, certificate, and db are the available authentication realms.
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-auth-realm.adoc#create-auth-realm[`create-auth-realm`(1)],
+xref:delete-auth-realm.adoc#delete-auth-realm[`delete-auth-realm`(1)]
+
+

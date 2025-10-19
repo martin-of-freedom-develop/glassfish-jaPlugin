@@ -1,0 +1,216 @@
+type=page
+status=published
+title=Upgrading an Installation of Application Server or {productName}
+next=upgrade-compatibility-issues.html
+prev=preface.html
+~~~~~~
+
+= Upgrading to {productName} {product-majorVersion}
+
+[[upgrading-an-installation-of-application-server-or-glassfish-server]]
+== 1 Upgrading an Installation of Application Server or {productName}
+
+This section explains how to upgrade to {productName} {product-majorVersion} from a previous version. The process involves replicating your existing configuration and applications in the new installation.
+
+*Key Topics*
+
+* <<upgrade-paths,Upgrade Paths>>
+* <<upgrade-procedure,Upgrade Procedure>>
+* <<special-cases,Special Cases (Clusters, Node Agents, NSS)>>
+* <<troubleshooting,Troubleshooting>>
+
+[[upgrade-paths]]
+=== Upgrade Paths
+Choose one of the following upgrade paths:
+
+Side-by-Side (Recommended)::
+Installs the new version in a separate directory, allowing you to test before switching to production. +
+**Steps:**
+
+1. Install {productName} {product-majorVersion} in a new directory.
+2. Manually copy the configuration from the old installation.
+3. Test the new installation.
+4. Update your production environment to use the new installation.
+
+In-Place (Not Recommended)::
+  Replaces the existing installation. Requires manual steps and significant downtime. +
+  **Steps:**
+
+  1. Move the current installation to a backup directory.
+  2. Install {productName} {product-majorVersion} in the original location.
+  3. Manually copy the configuration from the backup.
+  4. Test the new installation. If issues arise, restore the backup.
+
+[[upgrade-procedure]]
+=== Upgrade Procedure
+Use the Upgrade Tool (`asadmin start-domain --upgrade`) to migrate configurations and applications.
+
+==== Prerequisites
+- Stop all domains on the source server.
+- Install {productName} {product-majorVersion} (see {productName} Installation Guide).
+- Copy custom/third-party libraries from the old installation to the new one.
+
+==== Steps
+1. **Install {productName} {product-majorVersion}** in a new directory.
+2. **Copy configurations** from the old installation:
+   - Domain directory (e.g., `glassfish/domains/domain1`)
+   - Nodes directory (if applicable, e.g., `glassfish/nodes`)
+3. **Run the Upgrade Tool**: `asadmin start-domain --upgrade``
+4. **Start the upgraded domain**: `asadmin start-domain domain-name``
+5. **Verify the upgrade** by logging into the Admin Console.
+
+[[special-cases]]
+=== Special Cases
+
+[[upgrade-of-clusters]]
+
+==== Upgrade of Clusters
+
+When upgrading from a clustered configuration, the older cluster
+information is retained in a new `domain.xml` file in the {productName} {product-majorVersion} installation directories. However, it is still necessary to
+manually re-create the server instances that are contained in the
+clusters.
+
+To do that:
+
+1. Perform new (not upgrade) {productName} {product-majorVersion} installations on each
+node host. {productName} {product-majorVersion} installation instructions are provided
+in the xref:installation-guide.adoc#GSING[
+{productName} Installation Guide].
+
+2. Correct the node configuration on the upgraded DAS, if necessary.
+This procedure is described in xref:#correcting-cluster-config[Correcting Cluster configuration].
+
+3. Start the upgraded DAS.
++
+[source]
+----
+asadmin> start-domain domain-name
+----
+If the upgrade succeeded, the migrated cluster configuration exists and
+the `get-health` subcommand lists the status of the clustered instances
+as not running.
+
+4. Confirm that the cluster configuration exists and contains all its instances.
++
+[source]
+----
+asadmin> get-health cluster-name
+----
+For example, for the sample `cluster1` used in this procedure:
++
+[source]
+----
+asadmin> get-health cluster1
+instance1 not started
+instance2 not started
+Command get-health executed successfully.
+----
+
+5. Re-create the clustered server instances on each instance host. +
+The specific commands to use depend on your configuration.
+
+* If remote hosts cannot contact the DAS, export and import the
+instances' configuration data, as explained in
+"xref:ha-administration-guide.adoc#to-resynchronize-an-instance-and-the-das-offline[
+To Resynchronize an Instance and the DAS Offline]"
+in {productName} High Availability Administration Guide.
+
+* If remote hosts can contact the DAS, create each instance individually
+and resynchronize the instance with the DAS, as explained in the
+following sections:
+
+** "xref:ha-administration-guide.adoc#to-create-an-instance-locally[
+To Create an Instance Locally]"
+in {productName} High Availability Administration Guide
+
+** "xref:ha-administration-guide.adoc#to-resynchronize-an-instance-and-the-das-online[
+To Resynchronize an Instance and the DAS Online]"
+in {productName} High Availability Administration Guide +
+Note that the node name matches that used for the node agent in the 2.x
+installation. If you get an error stating that some attributes do not
+match the values in the DAS configuration, follow the instructions in
+xref:#correcting-cluster-config[Correcting Cluster configuration].
+
+6. After creating the instances, manually copy the instance-dir``/imq``
+directory for each instance from the older source installation to the
+target {productName} {product-majorVersion} installation.
+
+7. If necessary, start the cluster. +
+For example:
++
+[source]
+----
+asadmin> start-cluster cluster1
+----
+This step may or may not be necessary, depending on the procedure you
+used to create the server instances for the cluster.
+
+[[gkyin]]
+Example 2-3 Creating Two Local Instances
+
+The following example shows how to create two local instances in a
+cluster.
+
+[source]
+----
+host1$ asadmin --host dashost create-local-instance --node na1 --cluster cluster1 instance1
+host2$ asadmin --host dashost create-local-instance --node na2 --cluster cluster1 instance2
+----
+
+`dashost`::
+  The name of the DAS host.
+`na1`::
+  The name of the node host.
+`cluster1`::
+  The name of the cluster.
+`instance1`, `instance2`::
+  The names of the instances.
+
+[[correcting-potential-upgrade-problems]]
+
+[[correcting-cluster-config]]
+==== Correcting Cluster configuration
+{productName} {product-majorVersion} does not support node agents. If you're upgrading from a version that supports them or you have issues in cluster configuration after an upgrade, after upgrading the DAS:
+
+1. **Install {productName} {product-majorVersion} on each node host**.
+2. **Correct node configurations** using `update-node-config` or `update-node-ssh`.
+3. **Re-create clusters and instances**:
+   - Use `create-local-instance` for each instance.
+   - Copy the `imq` directory from the old installation.
+
+[[upgrading-installations-that-use-nss-cryptographic-tokens]]
+==== Upgrading Installations Using NSS Cryptographic Tokens
+{productName} {product-majorVersion} does not support NSS. If you're upgrading from a version that supports them, follow these steps:
+
+1. **Prepare for Upgrade**:
+   - Install {productName} {product-majorVersion} in a new directory.
+   - Copy the source domain to the new installation.
+   - Update `domain.xml` to remove NSS references and add JKS keystore paths.
+2. **Perform Post-Upgrade Configuration**:
+   - Migrate NSS keys to PKCS#12 using `keytool` and `certutil`.
+   - Update the master password if needed.
+3. **Upgrade PKCS#11 Hardware Tokens**:
+   - Configure the token using JDK-JSSE mechanisms.
+   - Update `domain.xml` to reference the hardware token.
+
+[[troubleshooting]]
+=== Troubleshooting
+
+==== Cluster Profile Security Setting
+If upgrading from Application Server 9.1 or Enterprise Server v2, ensure the `admin-service` element in `domain.xml` has:
+[source]
+----
+security-enabled=false
+----
+when `type=das-and-server`.
+
+==== Common Issues
+- **Cluster Profile Upgrade on Windows**: Ensure file paths use double backslashes (`\\`).
+- **Upgrade Verification**: Check logs for errors and verify deployed applications.
+
+[[terminology]]
+=== Terminology
+Source Domain Directory:: Directory of the domain being upgraded (e.g., `c:\glassfish\domains\domain1`).
+Target Root Domain's Directory:: Directory where domains are created in the new installation (e.g., `c:\glassfish7\glassfish\domains`).
+Master Password:: SSL certificate database password (default: `changeit`).

@@ -1,0 +1,100 @@
+type=page
+status=published
+title=show-component-status
+next=start-cluster.html
+prev=set-web-env-entry.html
+~~~~~~
+
+= show-component-status
+
+[[show-component-status]]
+
+== show-component-status
+
+Displays the status of the deployed component
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] show-component-status [--help]
+[--target target] component-name
+----
+
+=== Description
+
+The `show-component-status` subcommand gets the status (either enabled
+or disabled) of the deployed component.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  This option specifies the target on which you are showing the
+  component status. Valid values are:
+
+  `server`;;
+    Shows the component status for the default server instance `server`
+    and is the default value.
+  `domain`;;
+    Shows the component status for the domain.
+  cluster_name;;
+    Shows the component status for the cluster.
+  instance_name;;
+    Shows the component status for a clustered or stand-alone server
+    instance.
+
+=== Operands
+
+component-name::
+  The name of the component whose status is to be listed. +
+  The name can include an optional version identifier, which follows the
+  name and is separated from the name by a colon (`:`). The version
+  identifier must begin with a letter or number. It can contain
+  alphanumeric characters plus underscore (`_`), dash (`-`), and period
+  (`.`) characters. To list multiple versions, you can use an asterisk
+  (`*`) as a wildcard character. For more information about module and
+  application versions, see "xref:application-deployment-guide.adoc#module-and-application-versions[Module and Application
+  Versions]" in {productName} Application
+  Deployment Guide.
+
+=== Examples
+
+[[sthref2106]]
+
+==== Example 1   Showing the Status of a Component
+
+This example gets the status of the `MEjbApp` component.
+
+[source]
+----
+asadmin> show-component-status MEjbApp
+Status of MEjbApp is enabled
+Command show-component-status executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:list-applications.adoc#list-applications[`list-applications`(1)],
+xref:list-sub-components.adoc#list-sub-components[`list-sub-components`(1)]
+
+xref:application-deployment-guide.adoc#GSDPG[{productName} Application Deployment
+Guide]
+
+

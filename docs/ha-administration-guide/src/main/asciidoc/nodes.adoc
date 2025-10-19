@@ -1,0 +1,777 @@
+type=page
+status=published
+title=Administering {productName} Nodes
+next=clusters.html
+prev=ssh-setup.html
+~~~~~~
+
+= Administering {productName} Nodes
+
+[[administering-glassfish-server-nodes]]
+== 3 Administering {productName} Nodes
+
+A node represents a host on which the {productName} software is
+installed. A node must exist for every host on which {productName}
+instances reside. A node's configuration contains information about the
+host such as the name of the host and the location where the {productName} is installed on the host.
+
+The following topics are addressed here:
+
+* xref:#types-of-glassfish-server-nodes[Types of {productName} Nodes]
+* xref:#creating-listing-testing-and-deleting-ssh-nodes[Creating, Listing, Testing, and Deleting `SSH` Nodes]
+* xref:#creating-listing-and-deleting-config-nodes[Creating, Listing, and Deleting `CONFIG` Nodes]
+* xref:#updating-and-changing-the-type-of-a-node[Updating and Changing the Type of a Node]
+
+[[types-of-glassfish-server-nodes]]
+
+=== Types of {productName} Nodes
+
+Each {productName} node is one of the following types of node:
+
+`SSH`::
+  An `SSH` node supports communication over secure shell (SSH). If SSH
+  is set up and you plan to administer your {productName} instances
+  centrally, the instances must reside on `SSH` nodes. +
+  An `SSH` node's configuration contains the information that is
+  required to connect to the host through SSH. This information
+  includes, for example, the user name of the SSH user and the port
+  number for SSH connections to the host.
+`CONFIG`::
+  A `CONFIG` node does not support remote communication. If SSH is not set up
+  and you plan to administer your instances locally,
+  the instances can reside on `CONFIG` nodes. You cannot use `CONFIG`
+  nodes for instances that you plan to administer centrally. +
+  Each domain contains a predefined `CONFIG` node that is named
+  ``localhost-``domain, where domain is the name of the domain. On the
+  host where the domain administration server (DAS) is running, this
+  node represents the local host.
+
+[[creating-listing-testing-and-deleting-ssh-nodes]]
+
+=== Creating, Listing, Testing, and Deleting `SSH` Nodes
+
+An `SSH` node supports communication over SSH. If SSH is set up and you
+plan to administer your {productName} instances centrally, the
+instances must reside on `SSH` nodes. For information about setting up
+SSH, see xref:ssh-setup.adoc#enabling-centralized-administration-of-glassfish-server-instances[Enabling Centralized Administration of
+{productName} Instances].
+
+
+{productName} enables you to create `SSH` nodes for use by instances,
+obtain information about `SSH` nodes, test if `SSH` nodes are reachable,
+and delete `SSH` nodes that are no longer required.
+
+The following topics are addressed here:
+
+* xref:#to-create-an-ssh-node[To Create an `SSH` Node]
+* xref:#to-list-ssh-nodes-in-a-domain[To List `SSH` Nodes in a Domain]
+* xref:#to-test-if-an-ssh-node-is-reachable[To Test if an `SSH` Node is Reachable]
+* xref:#to-delete-an-ssh-node[To Delete an `SSH` Node]
+
+[[to-create-an-ssh-node]]
+
+==== To Create an `SSH` Node
+
+Use the `create-node-ssh` subcommand in remote mode to create an `SSH`
+node.
+
+Before You Begin
+
+Ensure that the SSH user can use SSH to log in to the host that the node
+will represent. By default, the `create-node-ssh` subcommand validates
+the node's parameters and the SSH connection to the host. If the SSH
+user cannot use SSH to log in to the host, the validation fails.
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+2. Run the `create-node-ssh` subcommand.
++
+[NOTE]
+====
+Only the options that are required to complete this task are provided in
+this step. For information about all the options for configuring the
+node, see the xref:reference-manual.adoc#create-node-ssh[`create-node-ssh`(1)] help page.
+
+If you are using password authentication for the SSH user, you must
+specify a password file through the `--passwordfile` option of the
+xref:reference-manual.adoc#asadmin[`asadmin`] utility. For more information about SSH user
+authentication, see xref:ssh-setup.adoc#setting-up-ssh-user-authentication[Setting Up SSH User
+Authentication].
+====
++
+[source]
+----
+asadmin> create-node-ssh --nodehost node-host [--installdir install-dir ]
+node-name
+----
+node-host::
+  The name of the host that the node represents. The name of the host
+  must be specified. Otherwise, an error occurs.
+install-dir::
+  The full path to the parent of the base installation directory of the
+  {productName} software on the host, for example,
+  `/export/glassfish7/`. If the {productName} software is installed
+  in the same directory on the node's host and the DAS host, you can
+  omit this option.
+node-name::
+  Your choice of name for the node that you are creating.
+
+[[nodes-example-3-1]]
+Example 3-1 Creating an `SSH` Node
+
+This example creates the `SSH` node `sj01` to represent the host
+`sj01.example.com`. The {productName} software is installed in the
+same directory on the DAS host and on the host `sj01.example.com`.
+
+[source]
+----
+asadmin> create-node-ssh --nodehost sj01.example.com sj01
+Command create-node-ssh executed successfully.
+----
+
+[[GSHAG348]]
+
+Troubleshooting
+
+The `create-node-ssh` subcommand might fail to create the node and
+report the error `Illegal sftp packet len`. If this error occurs, ensure
+that no the startup file on the remote host displays text for
+noninteractive shells. Examples of startup files are `.bashrc`,
+`.cshrc`, `.login`, and `.profile`.
+
+The SSH session interprets any text message that is displayed during
+login as a file-transfer protocol packet. Therefore, any statement in a
+startup file that displays text messages corrupts the SSH session,
+causing this error.
+
+See Also
+
+xref:reference-manual.adoc#create-node-ssh[`create-node-ssh`(1)]
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help create-node-ssh` at the command line.
+
+[[GSHAG350]]
+
+Next Steps
+
+After creating a node, you can create instances on the node as explained
+in the following sections:
+
+* xref:instances.adoc#to-create-an-instance-centrally[To Create an Instance Centrally]
+* xref:instances.adoc#to-create-an-instance-locally[To Create an Instance Locally]
+
+[[to-list-ssh-nodes-in-a-domain]]
+
+==== To List `SSH` Nodes in a Domain
+
+Use the `list-nodes-ssh` subcommand in remote mode to obtain information
+about existing `SSH` nodes in a domain.
+
+
+[NOTE]
+====
+To obtain information about all existing nodes in a domain, use the
+xref:reference-manual.adoc#list-nodes[`list-nodes`] subcommand.
+====
+
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Run the xref:reference-manual.adoc#list-nodes-ssh[`list-nodes-ssh`] subcommand.
++
+[source]
+----
+asadmin> list-nodes-ssh
+----
+
+[[nodes-example-3-2]]
+Example 3-2 Listing Basic Information About All `SSH` Nodes in a Domain
+
+This example lists the name, type, and host of all `SSH` nodes in the
+current domain.
+
+[source]
+----
+asadmin> list-nodes-ssh
+sj01  SSH  sj01.example.com
+sj02  SSH  sj02.example.com
+Command list-nodes-ssh executed successfully.
+----
+
+[[nodes-example-3-3]]
+Example 3-3 Listing Detailed Information About All `SSH` Nodes in a
+Domain
+
+This example lists detailed information about all `SSH` nodes in the
+current domain.
+
+[source]
+----
+asadmin> list-nodes-ssh --long=true
+NODE NAME   TYPE   NODE HOST          INSTALL DIRECTORY    REFERENCED BY
+sj01        SSH    sj01.example.com   /export/glassfish7   pmd-i1
+sj02        SSH    sj02.example.com   /export/glassfish7   pmd-i2
+Command list-nodes-ssh executed successfully.
+----
+
+See Also
+
+* xref:reference-manual.adoc#list-nodes[`list-nodes`(1)]
+* xref:reference-manual.adoc#list-nodes-ssh[`list-nodes-ssh`(1)]
+
+You can also view the full syntax and options of the subcommands by
+typing the following commands at the command line:
+
+* `asadmin help list-nodes`
+* `asadmin help list-nodes-ssh`
+
+[[to-test-if-an-ssh-node-is-reachable]]
+
+==== To Test if an `SSH` Node is Reachable
+
+Use the `ping-node-ssh` subcommand in remote mode to test if an `SSH`
+node is reachable.
+
+Before You Begin
+
+Ensure that SSH is configured on the host where the DAS is running and
+on the host that the node represents.
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Run the `ping-node-ssh` subcommand.
++
+[NOTE]
+====
+Only the options that are required to complete this task are provided in
+this step. For information about all the options for testing the node,
+see the xref:reference-manual.adoc#ping-node-ssh[`ping-node-ssh`(1)] help page.
+====
++
+[source]
+----
+asadmin> ping-node-ssh node-name
+----
+node-name::
+  The name of the node to test.
+
+[[nodes-example-3-4]]
+Example 3-4 Testing if an `SSH` Node Is Reachable
+
+This example tests if the `SSH` node `sj01` is reachable.
+
+[source]
+----
+asadmin> ping-node-ssh sj01
+Successfully made SSH connection to node sj01 (sj01.example.com)
+Command ping-node-ssh executed successfully.
+----
+
+See Also
+
+xref:reference-manual.adoc#ping-node-ssh[`ping-node-ssh`(1)]
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help ping-node-ssh` at the command line.
+
+[[to-delete-an-ssh-node]]
+
+==== To Delete an `SSH` Node
+
+Use the `delete-node-ssh` subcommand in remote mode to delete an `SSH`
+node.
+
+Deleting a node removes the node from the configuration of the DAS. The
+node's directories and files are deleted when the last {productName}
+instance that resides on the node is deleted.
+
+Before You Begin
+
+Ensure that no {productName} instances reside on the node that you
+are deleting. For information about how to delete an instance, see the
+following sections.
+
+* xref:instances.adoc#to-delete-an-instance-centrally[To Delete an Instance Centrally]
+* xref:instances.adoc#to-delete-an-instance-locally[To Delete an Instance Locally]
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Confirm that no instances reside on the node that you are deleting.
++
+[source]
+----
+asadmin> list-nodes-ssh --long=true
+----
+3. Run the xref:reference-manual.adoc#delete-node-ssh[`delete-node-ssh`] subcommand.
++
+[source]
+----
+asadmin> delete-node-ssh node-name
+----
+node-name::
+  The name of the node that you are deleting.
+
+[[nodes-example-3-5]]
+Example 3-5 Deleting an `SSH` Node
+
+This example confirms that no instances reside on the `SSH` node `sj01`
+and deletes the node `sj01`.
+
+[source]
+----
+asadmin> list-nodes-ssh --long=true
+NODE NAME   TYPE   NODE HOST          INSTALL DIRECTORY    REFERENCED BY
+sj01        SSH    sj01.example.com   /export/glassfish7
+sj02        SSH    sj02.example.com   /export/glassfish7   pmd-i2
+Command list-nodes-ssh executed successfully.
+asadmin> delete-node-ssh sj01
+Command delete-node-ssh executed successfully.
+----
+
+See Also
+
+* xref:instances.adoc#to-delete-an-instance-centrally[To Delete an Instance Centrally]
+* xref:instances.adoc#to-delete-an-instance-locally[To Delete an Instance Locally]
+* xref:reference-manual.adoc#delete-node-ssh[`delete-node-ssh`(1)]
+* xref:reference-manual.adoc#list-nodes-ssh[`list-nodes-ssh`(1)]
+
+You can also view the full syntax and options of the subcommands by
+typing the following commands at the command line:
+
+* `asadmin help delete-node-ssh`
+* `asadmin help list-nodes-ssh`
+
+[[creating-listing-and-deleting-config-nodes]]
+
+=== Creating, Listing, and Deleting `CONFIG` Nodes
+
+A `CONFIG` node does not support remote communication. If SSH is not set up
+and you plan to administer your instances locally, the
+instances can reside on `CONFIG` nodes. You cannot use `CONFIG` nodes
+for instances that you plan to administer centrally.
+
+{productName} enables you to create `CONFIG` nodes for use by
+instances, obtain information about `CONFIG` nodes, and delete `CONFIG`
+nodes that are no longer required.
+
+The following topics are addressed here:
+
+* xref:#to-create-a-config-node[To Create a `CONFIG` Node]
+* xref:#to-list-config-nodes-in-a-domain[To List `CONFIG` Nodes in a Domain]
+* xref:#to-delete-a-config-node[To Delete a `CONFIG` Node]
+
+[[to-create-a-config-node]]
+
+==== To Create a `CONFIG` Node
+
+Use the `create-node-config` command in remote mode to create a `CONFIG` node.
+
+[NOTE]
+====
+If you create an instance locally on a host for which no nodes are
+defined, you can create the instance without creating a node beforehand.
+In this situation, {productName} creates a `CONFIG` node for you. The
+name of the node is the unqualified name of the host. For more
+information, see xref:instances.adoc#to-create-an-instance-locally[To Create an Instance Locally].
+====
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Run the `create-node-config` subcommand.
++
+[NOTE]
+====
+Only the options that are required to complete this task are provided in
+this step. For information about all the options for configuring the
+node, see the xref:reference-manual.adoc#create-node-config[`create-node-config`(1)] help page.
+====
++
+[source]
+----
+asadmin> create-node-config [--nodehost node-host] [--installdir install-dir ]
+node-name
+----
+node-host::
+  The name of the host that the node represents. You may omit this
+  option. The name of the host can be determined when instances that
+  reside on the node are created.
+install-dir::
+  The full path to the parent of the base installation directory of the
+  {productName} software on the host, for example,
+  `/export/glassfish7/`. You may omit this option. The installation
+  directory can be determined when instances that reside on the node are
+  created.
+node-name::
+  Your choice of name for the node that you are creating.
+
+[[nodes-example-3-6]]
+Example 3-6 Creating a `CONFIG` Node
+
+This example creates the `CONFIG` node `cfg01`. The host that the node
+represents and the installation directory of the {productName}
+software on the host are to be determined when instances are added to
+the node.
+
+[source]
+----
+asadmin> create-node-config cfg01
+Command create-node-config executed successfully.
+----
+
+See Also
+
+xref:reference-manual.adoc#create-node-config[`create-node-config`(1)]
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help create-node-config` at the command line.
+
+[[GSHAG357]]
+
+Next Steps
+
+After creating a node, you can create instances on the node as explained
+in xref:instances.adoc#to-create-an-instance-locally[To Create an Instance Locally].
+
+[[to-list-config-nodes-in-a-domain]]
+
+==== To List `CONFIG` Nodes in a Domain
+
+Use the `list-nodes-config` subcommand in remote mode to obtain
+information about existing `CONFIG` nodes in a domain.
+
+
+[NOTE]
+====
+To obtain information about all existing nodes in a domain, use the
+xref:reference-manual.adoc#list-nodes[`list-nodes`] subcommand.
+====
+
+
+1. Ensure that the DAS is running.
++
+Remote subcommands require a running server.
+2. Run the xref:reference-manual.adoc#list-nodes-config[`list-nodes-config`] subcommand.
++
+[source]
+----
+asadmin> list-nodes-config
+----
+
+[[nodes-example-3-7]]
+Example 3-7 Listing Basic Information About All `CONFIG` Nodes in a
+Domain
+
+This example lists the name, type, and host of all `CONFIG` nodes in the
+current domain.
+
+[source]
+----
+asadmin> list-nodes-config
+localhost-domain1  CONFIG  localhost
+cfg01  CONFIG  cfg01.example.com
+cfg02  CONFIG  cfg02.example.com
+Command list-nodes-config executed successfully.
+----
+
+[[nodes-example-3-8]]
+Example 3-8 Listing Detailed Information About All `CONFIG` Nodes in a
+Domain
+
+This example lists detailed information about all `CONFIG` nodes in the
+current domain.
+
+[source]
+----
+asadmin> list-nodes-config --long=true
+NODE NAME           TYPE     NODE HOST            INSTALL DIRECTORY    REFERENCED BY
+localhost-domain1   CONFIG   localhost            /export/glassfish7
+cfg01               CONFIG   cfg01.example.com    /export/glassfish7   yml-i1
+cfg02               CONFIG   cfg02.example.com    /export/glassfish7   yml-i2
+Command list-nodes-config executed successfully.
+----
+
+See Also
+
+* xref:reference-manual.adoc#list-nodes[`list-nodes`(1)]
+* xref:reference-manual.adoc#list-nodes-config[`list-nodes-config`(1)]
+
+You can also view the full syntax and options of the subcommands by
+typing the following commands at the command line:
+
+* `asadmin help list-nodes`
+* `asadmin help list-nodes-config`
+
+[[to-delete-a-config-node]]
+
+==== To Delete a `CONFIG` Node
+
+Use the `delete-node-config` subcommand in remote mode to delete a
+`CONFIG` node.
+
+Deleting a node removes the node from the configuration of the DAS. The
+node's directories and files are deleted when the last {productName}
+instance that resides on the node is deleted.
+
+Before You Begin
+
+Ensure that no {productName} instances reside on the node that you
+are deleting. For information about how to delete an instance that
+resides on a `CONFIG` node, see xref:instances.adoc#to-delete-an-instance-locally[To Delete an
+Instance Locally].
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Confirm that no instances reside on the node that you are deleting.
++
+[source]
+----
+asadmin> list-nodes-config --long=true
+----
+3. Run the xref:reference-manual.adoc#delete-node-config[`delete-node-config`] subcommand.
++
+[source]
+----
+asadmin> delete-node-config node-name
+----
+node-name::
+  The name of the node that you are deleting.
+
+[[nodes-example-3-9]]
+Example 3-9 Deleting a `CONFIG` Node
+
+This example confirms that no instances reside on the `CONFIG` node
+`cfg01` and deletes the node `cfg01`.
+
+[source]
+----
+asadmin> list-nodes-config --long=true
+NODE NAME           TYPE     NODE HOST           INSTALL DIRECTORY    REFERENCED BY
+localhost-domain1   CONFIG   localhost           /export/glassfish7
+cfg01               CONFIG   cfg01.example.com   /export/glassfish7
+cfg02               CONFIG   cfg02.example.com   /export/glassfish7   yml-i2
+Command list-nodes-config executed successfully.
+asadmin> delete-node-config cfg01
+Command delete-node-config executed successfully.
+----
+
+See Also
+
+* xref:instances.adoc#to-delete-an-instance-locally[To Delete an Instance Locally]
+* xref:reference-manual.adoc#delete-node-config[`delete-node-config`(1)]
+* xref:reference-manual.adoc#list-nodes-config[`list-nodes-config`(1)]
+
+You can also view the full syntax and options of the subcommands by
+typing the following commands at the command line:
+
+* `asadmin help delete-node-config`
+* `asadmin help list-nodes-config`
+
+[[updating-and-changing-the-type-of-a-node]]
+
+=== Updating and Changing the Type of a Node
+
+{productName} enables you to update the configuration data of any
+node and to change the type of a node.
+
+The following topics are addressed here:
+
+* xref:#to-update-an-ssh-node[To Update an `SSH` Node]
+* xref:#to-update-a-config-node[To Update a `CONFIG` Node]
+* xref:#to-change-the-type-of-a-node[To Change the Type of a Node]
+
+[[to-update-an-ssh-node]]
+
+==== To Update an `SSH` Node
+
+Use the `update-node-ssh` subcommand in remote mode to update an `SSH` node.
+
+Options of this subcommand specify the new values of the node's
+configuration data. If you omit an option, the existing value is unchanged.
+
+Before You Begin
+
+Ensure that the following prerequisites are met:
+
+* SSH is configured on the host where the DAS is running and on the host
+that the node represents.
+* The node that you are updating exists.
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Run the `update-node-ssh` subcommand.
++
+[source]
+----
+asadmin> update-node-ssh options node-name
+----
+options::
+  Options of the `update-node-ssh` subcommand for changing the node's
+  configuration data. For information about these options, see the
+  xref:reference-manual.adoc#update-node-ssh[`update-node-ssh`(1)] help page.
+node-name::
+  The name of the `SSH` node to update.
+
+[[nodes-example-3-10]]
+Example 3-10 Updating an `SSH` Node
+
+This example updates the host that the node `sj01` represents to
+`adc01.example.com`.
+
+[source]
+----
+asadmin> update-node-ssh --nodehost adc01.example.com sj01
+Command update-node-ssh executed successfully.
+----
+
+See Also
+
+xref:reference-manual.adoc#update-node-ssh[`update-node-ssh`(1)]
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help update-node-ssh` at the command line.
+
+[[to-update-a-config-node]]
+
+==== To Update a `CONFIG` Node
+
+Use the `update-node-config` subcommand in remote mode to update a
+`CONFIG` node.
+
+Options of this subcommand specify the new values of the node's
+configuration data. If you omit an option, the existing value is
+unchanged.
+
+Before You Begin
+
+Ensure that the node that you are updating exists.
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Run the `update-node-config` subcommand.
++
+[source]
+----
+asadmin> uupdate-node-config options node-name
+----
+options::
+  Options of the `update-node-config` subcommand for changing the node's
+  configuration data. For information about these options, see the
+  xref:reference-manual.adoc#update-node-config[`update-node-config`(1)] help page.
+node-name::
+  The name of the `CONFIG` node to update.
+
+[[nodes-example-3-11]]
+Example 3-11 Updating a `CONFIG` Node
+
+This example updates the host that the node `cfg02` represents to
+`adc02.example.com`.
+
+[source]
+----
+asadmin> update-node-config --nodehost adc02.example.com cfg02
+Command update-node-config executed successfully.
+----
+
+See Also
+
+xref:reference-manual.adoc#update-node-config[`update-node-config`(1)]
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help update-node-config` at the command line.
+
+[[to-change-the-type-of-a-node]]
+
+==== To Change the Type of a Node
+
+The subcommands for updating a node can also be used to change the type
+of a node.
+
+Changing the type of a `CONFIG` node enables remote communication for
+the node. The type of the node after the change determines the protocol
+over which the node is enabled for remote communication:
+
+* An `SSH` node is enabled for communication over SSH.
+
+As part of the process of changing the type of a node, you can also
+change other configuration data for the node.
+
+Options of the subcommands for updating a node specify the new values of
+the node's configuration data. For most options, if you omit the option,
+the existing value is unchanged. However, default values are applied in
+the following situations:
+
+* Any of the following options of the `update-node-ssh` subcommand is omitted:
+
+** `--sshport`
+** `--sshuser`
+** `--sshkeyfile`
+
+
+[CAUTION]
+====
+Changing an `SSH` node to a `CONFIG` node disables remote communication for the node.
+====
+
+
+Before You Begin
+
+Ensure that the following prerequisites are met:
+
+* SSH is configured on the host where the DAS is running and on
+the host that the node represents.
+* The node the type of which you are changing exists.
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+
+2. Run the appropriate subcommand for updating a node, depending on the
+type of the node after the change.
+
+** To change the type of a node to `SSH`, run the `update-node-ssh`
+subcommand on the node.
++
+[source]
+----
+asadmin> update-node-ssh [options] config-node-name
+----
+options::
+  Options of the `update-node-ssh` subcommand for changing the node's
+  configuration data. For information about these options, see the
+  xref:reference-manual.adoc#update-node-ssh[`update-node-ssh`(1)] help page.
+config-node-name::
+  The name of the `CONFIG` node to change.
+
+** To change the type of a node to `CONFIG`, run the `update-node-config`
+subcommand on the node.
++
+[source]
+----
+asadmin> update-node-config [options] ssh-node-name
+----
+options::
+  Options of the `update-node-config` subcommand for changing the node's
+  configuration data. For information about these options, see the
+  xref:reference-manual.adoc#update-node-config[`update-node-config`(1)] help page.
+ssh-node-name::
+  The name of the `SSH` node to change.
+
+[[nodes-example-3-12]]
+Example 3-12 Changing a `CONFIG` Node to an `SSH` Node
+
+This example changes the `CONFIG` node `cfg02` to an `SSH` node.
+
+[source]
+----
+asadmin> update-node-ssh cfg02
+Command update-node-ssh executed successfully.
+----
+
+See Also
+
+* xref:reference-manual.adoc#update-node-config[`update-node-config`(1)]
+* xref:reference-manual.adoc#update-node-ssh[`update-node-ssh`(1)]
+
+You can also view the full syntax and options of the subcommand by
+typing the following commands at the command line.
+
+* `asadmin help update-node-config`
+* `asadmin help update-node-ssh`

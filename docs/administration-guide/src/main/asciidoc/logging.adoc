@@ -1,0 +1,1482 @@
+title=Administering the Logging Service
+next=monitoring.html
+prev=webapps.html
+~~~~~~
+
+= Administering the Logging Service
+
+[[administering-the-logging-service]]
+== 7 Administering the Logging Service
+
+This chapter provides instructions on how to configure logging and how
+to view log information in the {productName} {product-majorVersion} environment.
+
+The following topics are addressed here:
+
+* <<About Logging>>
+* <<Default Configuration>>
+* <<Configuring the Logging Service>>
+* <<Using Asadmin>>
+
+[[about-logging]]
+
+=== About Logging
+
+Logging is the process by which Java Virtual Machine
+captures information about events that occur, such as important method calls,
+reaching states, or even configuration errors, security failures, or server malfunction.
+
+This data is recorded in log files and is usually the first source
+of information when problems occur.
+Analyzing the log files can help you to follow events that occur
+in the server runtime and determine the overall health of the server.
+
+Although application components can use other logging frameworks as
+`https://www.slf4j.org/[SLF4J]` or `https://logging.apache.org/log4j/2.x/[LOG4J2]`,
+we recommend to use the
+`https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/package-summary.html[Java Util Logging Framework]`
+or even better it's latest facade
+`https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/lang/System.Logger.html[System.Logger]`.
+
+[WARNING]
+====
+Logs may contain sensitive information.
+Despite the {productName} in default configuration doesn't log any passwords,
+before you share logs with anyone else you should verify that you don't compromise your
+system by any information contained in logs, especially if you configured more verbose log levels.
+====
+
+[[log-manager]]
+==== Log Manager
+
+Log Manager is a service responsible for the logging system.
+The service is initialized on JVM startup.
+After it's first usage it cannot be changed until the JVM is restarted,
+but it can be reconfigured.
+{productName} now comes with customized log manager.
+
+[[level]]
+==== Level
+
+Level is the key feature of the logging system. Every JUL <<Logger>> has an internal
+integer value representing severity.
+Levels are set to
+
+* <<Log Record>> as the severity level of the record.
+* <<Logger>> as the minimal severity level processed by the logger. Log record with lower severity is ignored.
+* <<Handler>> as the minimal severity level processed by the handler. Log record with lower severity is ignored.
+
+There are following predefined levels; however the real usage depends on developers:
+
+* ALL - Special level used by loggers and handlers to declare that they accept all levels.
+* SEVERE - Used for serious errors.
+* WARNING - Used for log records providing an information about some hazards which
+can be handled by the application or they can even lead to a severe state.
+* INFO - Used to log some important information useful even for the user.
+* CONFIG - Used for providing an information related to a configuration.
+* FINE - Level for tracing. Used for providing an information about internal behavior
+of the java application, but still not so detailed.
+* FINER - Level for tracing. More detailed information, for example usages
+of `Logger.entering` and `Logger.exiting` methods.
+* FINEST - Level for tracing. Usually very verbose messages slowing down the system
+but providing a complete information what is going on.
+* OFF - Special level used by loggers and handlers to declare that they ignore all levels.
+
+Some projects define custom levels, but at this time it is rather rare.
+
+[[log-record]]
+==== Log Record
+
+Log Record is an object created by a <<Logger>> or it's caller and sent
+to the hierarchy of loggers and handlers which will process it.
+Every time you use the Logger object to log a message with a level passing
+configured level filters, one LogRecord instance is created and processed.
+
+[[logger]]
+==== Logger
+
+Logger is a facade of the logging system. It is transparent so it can be
+initialized as a constant. Logger name is usually same as the full name of
+the class which created it, but specialized loggers can be used too.
+
+Loggers are organized in a tree, so the log record is usually processed by
+the logger which accepted or created it, then passed to the parent logger (parent package),
+it's parent, etc. unless it is configured to not to do so.
+
+The logger log level specifies a severity level to filter what is important for the user.
+There are several special loggers:
+
+* root logger - uses an empty string as a name.
+* system root logger - uses an empty string as a name too, but is not accessible outside JDK, which uses it internally.
+* global logger - uses `global` as it's name. It is not recommended to use it.
+
+
+==== Handler
+
+Handler is responsible for handling the record so it can print the record
+to the standard output, file, e-mail, network, etc.
+Handler have also it's own level set. This level serves as a filter of
+incomming log records - usually it is not desired to send detailed messages
+to an e-mail, for example.
+
+==== Formatter
+
+Formatter is responsible for formatting of the log record to a String
+object. It is a usual attribute of the handler, but not all handlers use
+formatters, for example some handlers may just serialize the log record,
+call the logging system of the operating system or call a web service.
+
+==== Configuration
+
+JUL is usually configured by the `logging.properties` file unless you would use different
+log manager or you use the JVM option `java.util.logging.config.file` to override it.
+
+
+[[defaults]]
+
+=== Default Configuration
+
+[[logging-properties]]
+
+==== The Configuration File
+
+The DAS as well as each configuration, instance, and cluster has its own `logging properties` file.
+By default in an {productName} domain, logging properties files are created in the following locations:
+
+[width="100%",cols="18%,82%",options="header",]
+|===
+|Target |Default Location of Logging Properties File
+|DAS |domain-dir``/config/logging.properties``
+
+|A configuration |domain-dir``/config/``config-name``/logging.properties``,
+where config-name represents the name of a configuration that is shared
+by one or more instances or clusters.
+
+|An instance
+|domain-dir``/config/``instance-name``-config/logging.properties``, where
+instance-name represents the name of the instance.
+
+|A cluster
+|domain-dir``/config/``cluster-name``-config/logging.properties``, where
+cluster-name represents the name of the cluster.
+|===
+
+
+For information about configuring logging properties, see
+<<Configuring the Logging Service>>.
+
+==== The Server Log File
+
+By default {productName} log records are captured in the `server.log` file which
+can be found in the `logs` directory under the instance's directory.
+Each instance, managed server instance (that is, each cluster member),
+and the domain administration server (DAS) has an individual server log file.
+
+This file will contain also logs of deployed applications if they use
+Java Util Logging, System.Logger or any other facade mapped to this logging
+system in the backend.
+
+[width="100%",cols="40%,60%",options="header",]
+|===
+|Instance |Default Location
+|DAS |domain-dir``/logs/server.log``
+|Each server instance |instance-dir``/logs/server.log``
+|Cluster instance |instance-dir``/logs/server.log``
+|===
+
+For example, in a domain hosted on a given machine that includes a
+cluster with two managed servers (`ClusterServer1` and `ClusterServer1`)
+and a standalone instance (`StandaloneServer`), the log files might be
+arranged in the following directory structure. In this directory
+structure, the `server.log` file for the DAS is located in
+domain-dir``/logs``.
+
+[source]
+----
+as-install-parent directory
+  glassfish/
+    domains/
+      domain-dir/
+        logs/
+          server.log
+    nodes/
+      hostname/
+        ClusterServer1/
+          logs/
+            server.log
+        ClusterServer2/
+          logs/
+            server.log
+        StandaloneServer/
+          logs/
+            server.log
+----
+
+The `server.log` file uses the <<ODL>> log format by default and is
+rolled to a new file after it's size exceeds 100 Megabytes. If something
+in server's JVM prints to the standard output stream or standard
+error stream, it is redirected to the `server.log` file.
+
+You can change the default name, location, formatting or management of a log
+file by modifying the `logging properties` file for the corresponding instance,
+however we don't recommend to change the location of the file as it may affect
+availability of some services.
+
+==== The Access Log File
+
+The `access.log` file serves to log all requests made to the HTTP service or
+virtual server. This feature is disabled by default, but you can enable it by
+using the asadmin set command, using Admininistration Console or the Admin REST API.
+
+This logging feature is not persisted in logging.properties but in domain.xml, because
+it doesn't use Java Util Logging framework but an internal implementation instead.
+
+----
+asadmin> get 'server.http-service.*'
+server.http-service.virtual-server.__asadmin.access-log=${com.sun.aas.instanceRoot}/logs/access
+server.http-service.virtual-server.__asadmin.access-logging-enabled=inherit
+...
+server.http-service.virtual-server.server.access-log=${com.sun.aas.instanceRoot}/logs/access
+server.http-service.virtual-server.server.access-logging-enabled=inherit
+server.http-service.access-log.buffer-size-bytes=32768
+server.http-service.access-log.format=%client.name% %auth-user-name% %datetime% %request% %status% %response.length%
+server.http-service.access-log.max-history-files=-1
+server.http-service.access-log.rotation-enabled=true
+server.http-service.access-log.rotation-interval-in-minutes=1440
+server.http-service.access-log.rotation-policy=time
+server.http-service.access-log.rotation-suffix=yyyy-MM-dd
+server.http-service.access-log.write-interval-seconds=300
+server.http-service.access-logging-enabled=false
+----
+
+==== Standard Output Stream
+
+When you start the server with the `--verbose` argument, the server prints log
+records to the standard output too.
+The output is limited to just INFO levels and higher and uses the standard error stream,
+but this can be switched to standard output stream too.
+Log records are formatted to the xref:UniformLogFormatter[Uniform Log Format]] by default.
+
+==== Logger Levels
+
+The `logging.properties` contains many loggers used by the {productName} to make changes easier.
+Most of loggers use the INFO level by default.
+
+[[configuring]]
+
+=== Configuring the Logging Service
+
+You can either directly edit the `logging.properties` file or use the asadmin command,
+Administration Console or REST API.
+On DAS, changes in the file have immediate effect with some small latency before they get applied.
+For instances managed by nodes it is a bit more complicated and it depends
+on the synchronization of the configuration with DAS.
+
+[[configuring-warning]]
+[WARNING]
+====
+If you edit `logging.properties` manually on an instance managed by the node, it will be
+overwritten on the next synchronization with DAS.
+====
+
+[[log-records]]
+
+=== Log Records
+
+Because the automatic detection of caller class and method from stacktrace significantly affects
+performance of the logging system, we added the `org.glassfish.main.jul.classAndMethodDetection.enabled`
+property which affects the `*.printSource` property of formatters.
+
+* If this key is set to true, GJULE will detect the caller class and method from stacktrace,
+which is quite expensive operation affecting logging throughput.
+* If it is set to false, GJULE will not perform such detection. Formatters which use `getSourceClassName`
+or `getSourceMethodName` of the record will receive `null` unless the log record has set these values explicitly.
+* If the property is not set, GJULE makes the decision based on the (`*.printSource` property) - if
+any formatter requires this feature, the feature is enabled. Note that the `*.printSource` property
+must be explicitly set to true in `logging.properties`.
+* It is disabled otherwise.
+
+[[loggers]]
+
+==== Loggers
+
+Changing the logger level is quite easy and it is a preferred way how to filter log records
+by their importance.
+
+So for example if you want to get all records handled by the logging
+system, you comment out all logger level settings except the root logger and set it's level
+to `FINEST`.
+
+----
+.level=FINEST
+----
+
+[[handlers]]
+
+==== Handlers
+
+You can use all JUL features, but some of {productName} features depend on some settings
+like the existence of the configured <<GlassFishLogHandler>>
+and it's `server.log` file.
+Also be careful when changing it's configuration as it may affect the performance.
+
+[[GlassFishLogHandler]]
+===== GlassFishLogHandler
+
+The `org.glassfish.main.jul.handler.GlassFishLogHandler` is used to handle persist log records
+into the `server.log` file. It is optimized for the best performance so logging would not
+reduce the performance of the server instance and applications deployed to it.
+
+Example:
+----
+org.glassfish.main.jul.handler.GlassFishLogHandler.buffer.capacity=10000
+org.glassfish.main.jul.handler.GlassFishLogHandler.buffer.timeoutInSeconds=0
+org.glassfish.main.jul.handler.GlassFishLogHandler.enabled=true
+org.glassfish.main.jul.handler.GlassFishLogHandler.encoding=UTF-8
+org.glassfish.main.jul.handler.GlassFishLogHandler.file=${com.sun.aas.instanceRoot}/logs/server.log
+org.glassfish.main.jul.handler.GlassFishLogHandler.flushFrequency=1
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter=org.glassfish.main.jul.formatter.ODLLogFormatter
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.excludedFields=
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.multiline=true
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.printSource=false
+org.glassfish.main.jul.handler.GlassFishLogHandler.level=ALL
+org.glassfish.main.jul.handler.GlassFishLogHandler.redirectStandardStreams=true
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.compress=false
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles=0
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.megabytes=100
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.minutes=0
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.rollOnDateChange=false
+----
+
+[[basic-settings]]
+====== Basic Settings
+
+* `enabled` - `false` means that the handler will stay configured in the logging system,
+but it will ignore incoming records. Default is `true`.
+* `encoding` - file's character encoding. Default is `UTF-8`.
+* `file` - the output file; you can use also system options - default is `${com.sun.aas.instanceRoot}/logs/server.log`
+* `flushFrequency` - count of records to be handled in a single batch. Default is 1.
+* `formatter` - a formatter class to be used for formatting log records as strings.
+Default value is xref:ODL[`org.glassfish.main.jul.formatter.ODLLogFormatter`]
+* `formatter.*` - can be used for custom settings of the formatter.
+This works only for <<ODLLogFormatter>>, <<UniformLogFormatter>> and <<OneLineFormatter>>.
+* `level` - Level used to filter log records. Less important log records will be ignored.
+Default is `ALL`.
+* `redirectStandardStreams` - if `true`, which is default, everything printed
+to the standard output stream and standard error stream is processed by the handler
+as an INFO resp. ERROR log record. While using these streams is not recommended in
+Jakarta EE applications, it should be rather rare.
+
+====== Receive Buffer
+
+The `GlassFishLogHandler` has a receive buffer for incomming log records to optimize throughput.
+If the buffer is full and a logger tries to add another record, logger's thread is blocked.
+Then if the timeout is set to 0, the thread is blocked until there's free capacity available
+- if the handler cannot process records, it may be blocked forever.
+But if you set the timeout to a positive value, and the thread is blocked for longer time,
+the whole buffer is reset and added is just an error record describing what happened.
+
+Despite this situation should not occur in standard situation, it may happen ie. when
+the file system stops working or is extremely slow.
+
+* `buffer.capacity` - count of records in the receive buffer, default is 10000 log records.
+* `buffer.timeoutInSeconds` - maximal time for waiting. Default is 0 which means forever.
+The buffer is reset after timeout, which means that all unprocessible log records are lost.
+
+[[log-file-rotation]]
+====== Log File Rotation
+
+The `GlassFishLogHandler` can roll the output log file under following conditions:
+
+* if user forced him to do so, see <<To Rotate Log Files Manually>> for more
+* if the size of the file exceeded given limit
+* if the date changed
+* if the specified number of minutes have passed since the file was opened
+
+The last two conditions are exclusive, the date change has higher priority.
+
+The `flushFrequency` parameter affects how many log records will be formatted
+into the log file before the file is rolled out even after the file size exceeded it's configured
+limit.
+
+The rotation means that the log file is renamed, so the new file name gets
+a current timestamp as a suffix.
+If there already is a file with the same name, the implementation tries to add another suffix
+with a counter until it finds a name which doesn't exist yet.
+
+----
+drwxrwxr-x 14 admin admin   4096 jul 29 21:21 ../
+-rw-rw-r--  1 admin admin   2521 aug  3 18:18 server.log
+-rw-rw-r--  1 admin admin 191391 jul 29 21:21 server.log_2022-07-29T21-21-54
+-rw-rw-r--  1 admin admin  24920 aug  3 18:18 server.log_2022-08-03T18-18-38
+----
+
+You can configure the logging service to change the default settings for
+log file rotation, as explained in <<Setting Log File Rotation>>.
+
+
+This is a list of related configuration properties:
+
+* `rotation.compress` - compress the rotated file using GZIP algorithm provided by JDK. Default is false.
+* `rotation.maxArchiveFiles` - maximal count of archived log files (excludes the active one).
+Default is 0, which means unlimited.
+* `rotation.limit.megabytes` - size of the file initiating rotation of the file.
+Default is 100 Megabytes. The final file will be slightly larger.
+* `rotation.limit.minutes` - number of minutes since the last rotation. Default is 0 (unlimited, disabled).
+* `rotation.rollOnDateChange` - if set to `true` rolls the file at midnight. Default is `false`.
+
+[[SimpleLogHandler]]
+===== SimpleLogHandler
+
+The `org.glassfish.main.jul.handler.SimpleLogHandler` has similar targets as the
+`https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/ConsoleHandler.html[`ConsoleHandler`]`,
+with few differences:
+
+* can be configured to use STDOUT instead of STDERR
+* uses <<OneLineFormatter>> by default
+
+The handler configuration properties:
+
+* `encoding` - output character encoding. Default is null which means it will use the system default.
+* `formatter` - a formatter class to be used for formatting log records as strings.
+Default value is <<OneLineFormatter,`org.glassfish.main.jul.formatter.OneLineFormatter`>>
+* `formatter.*` - can be used for custom settings of the formatter.
+This works only for <<ODLLogFormatter>>, <<UniformLogFormatter>> and <<OneLineFormatter>>.
+* `level` - Level used to filter log records. Less important log records will be ignored.
+Uses `INFO` as a default.
+* `useErrorStream` - if `false`, uses STDOUT instead of STDERR. Default is `true`.
+
+Configuration example:
+----
+org.glassfish.main.jul.handler.SimpleLogHandler.formatter=org.glassfish.main.jul.formatter.OneLineFormatter
+org.glassfish.main.jul.handler.SimpleLogHandler.formatter.printSource=false
+org.glassfish.main.jul.handler.SimpleLogHandler.level=INFO
+org.glassfish.main.jul.handler.SimpleLogHandler.useErrorStream=true
+----
+
+[[SyslogHandler]]
+===== SyslogHandler
+
+The `org.glassfish.main.jul.handler.SyslogHandler` is a special handler which is able to send
+log records to the Unix Syslog facility. The prerequisity is that the Syslog service must
+listen on the configured network endpoint.
+See `https://en.wikipedia.org/wiki/Syslog[Syslog on Wikipedia.org]` for more.
+
+The handler configuration properties:
+
+* `buffer.capacity` - count of records in the receive buffer. Default is 5000 log records.
+* `buffer.timeoutInSeconds` - maximal time for waiting. Default is 300.
+The buffer is reset after timeout, which means that all unprocessible log records are lost.
+* `enabled` - `false` means that the handler will stay configured in the logging system,
+but it will ignore incoming records. Default is `true`.
+* `encoding` - output character encoding used to send data to the Syslog service.
+Default is `UTF-8`.
+* `formatter` - a formatter class to be used for formatting log records as strings.
+Default value is <<SimpleFormatter,`java.util.logging.SimpleFormatter`>>
+* `host` - a host name or IP address used of the UDP endpoint.
+Default is an autodetected name of the local host.
+* `level` - Level used to filter log records. Less important log records will be ignored.
+The default level is `WARNING`.
+* `port` - a port of the Syslog UDP listener. Default is 514.
+
+
+Configuration example:
+----
+org.glassfish.main.jul.handler.SyslogHandler.enabled=true
+org.glassfish.main.jul.handler.SyslogHandler.encoding=UTF-8
+org.glassfish.main.jul.handler.SyslogHandler.formatter=java.util.logging.SimpleFormatter
+org.glassfish.main.jul.handler.SyslogHandler.host=
+org.glassfish.main.jul.handler.SyslogHandler.level=SEVERE
+org.glassfish.main.jul.handler.SyslogHandler.port=514
+----
+
+
+[[Formatters]]
+==== Formatters
+
+[[excluded-fields]]
+===== Excluded Fields
+
+Some of formatters support exclusion of some of fields. Currently is possible to exclude following fields:
+
+* `tid` - Thread id and name
+* `levelValue` - Integer value of the log level.
+
+[[ODL]]
+===== ODLLogFormatter
+
+The `org.glassfish.main.jul.formatter.ODLLogFormatter` logs records in
+the Oracle Diagnostic Loggging Format (ODL).
+
+----
+[2022-08-01T19:43:29.952291+02:00] [GlassFish 7.0] [INFO] [] [com.sun.enterprise.server.logging.LogManagerService] [tid: _ThreadID=1 _ThreadName=main] [levelValue: 800] [[
+Using property file: /app/appservers/glassfish7/glassfish/domains/domain1/config/logging.properties]]
+
+[2022-08-01T19:43:29.986871+02:00] [GlassFish 7.0] [INFO] [NCLS-LOGGING-00009] [com.sun.enterprise.server.logging.LogManagerService] [tid: _ThreadID=1 _ThreadName=main] [levelValue: 800] [[
+Running GlassFish Version: Eclipse GlassFish  7.0.0  (build master-b827-g71a6150 2022-08-01T11:18:51+0200)]]
+----
+
+The formatter has following properties:
+
+* `excludedFields` - comma separated list of fields which should not be printed. None by default.
+See <<Excluded Fields>>
+* `fieldSeparator` - String separating fields. Space by default.
+* `multiline` - if set to `true` (default), the end of line character is inserted before the log message.
+* `printSequenceNumber` - if set to `true`, logs the sequence number of each log record. Default is `false`.
+* `printSource` - if set to `true`, logs the class and method which created the log record. Default is `false`.
+* `timestampFormat` - see the `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html[DateTimeFormatter]` documentation.
+Default is `https://en.wikipedia.org/wiki/ISO_8601[ISO-8601]` timestamp with microseconds and time zone.
+
+
+[[Uniform]]
+===== UniformLogFormatter
+
+The `org.glassfish.main.jul.formatter.UniformLogFormatter` logs records in
+the Uniform Loggging Format.
+
+----
+[#|2022-08-02T18:16:29.677628+02:00|INFO|GlassFish 7.0|com.sun.enterprise.server.logging.LogManagerService|_ThreadID=1;_ThreadName=main;_LevelValue=800;|
+Using property file: /app/appservers/glassfish7/glassfish/domains/domain1/config/logging.properties|#]
+
+[#|2022-08-02T18:16:29.755356+02:00|INFO|GlassFish 7.0|com.sun.enterprise.server.logging.LogManagerService|_ThreadID=1;_ThreadName=main;_LevelValue=800;_MessageID=NCLS-LOGGING-00009;|
+Running GlassFish Version: Eclipse GlassFish  7.0.0  (build master-b827-g71a6150 2022-08-01T11:18:51+0200)|#]
+----
+
+The formatter has following properties:
+
+* `excludedFields` - comma separated list of fields which should not be printed. None by default.
+See <<Excluded Fields>>
+* `fieldSeparator` - String separating fields. Space by default.
+* `multiline` - if set to `true` (default), the end of line character is inserted before the log message.
+* `printSequenceNumber` - if set to `true`, logs the sequence number of each log record. Default is `false`.
+* `printSource` - if set to `true`, logs the class and method which created the log record. Default is `false`.
+* `recordMarker.begin` - the prefix of the log record, default is `[#|`.
+* `recordMarker.end` - the suffix of the log record, default is `|#]`.
+* `timestampFormat` - see the `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html[DateTimeFormatter]` documentation.
+Default is `https://en.wikipedia.org/wiki/ISO_8601[ISO-8601]` timestamp with microseconds and time zone.
+
+[[OneLine]]
+===== OneLineFormatter
+
+The `org.glassfish.main.jul.formatter.OneLineFormatter` logs records in the following simple format:
+
+----
+22:50:43.174228    INFO                 main          com.sun.enterprise.server.logging.LogManagerService Using property file: /app/appservers/glassfish7/glassfish/domains/domain1/config/logging.properties
+22:50:43.266648    INFO                 main          com.sun.enterprise.server.logging.LogManagerService Running GlassFish Version: Eclipse GlassFish  7.0.0  (build master-b827-g71a6150 2022-08-01T11:18:51+0200)
+----
+
+* `printSource` - if set to `true` (default), logs the class and method which created the log record
+while when set to `false` it prefers the logger name.
+* `size.level` - number of characters taken by the level column. Default is 7.
+* `size.thread` - number of characters taken by the thread column. Default is 20.
+* `size.class` - number of characters taken by the class name column. Default is 60.
+* `timestampFormat` - see the `https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/time/format/DateTimeFormatter.html[DateTimeFormatter]` documentation.
+Default is `https://en.wikipedia.org/wiki/ISO_8601[ISO-8601]` time with microseconds (not date, no timezone).
+
+
+[[Simple]]
+===== SimpleFormatter
+
+The full name is `java.util.logging.SimpleFormatter`. It is a default formatter provided by the JDK,
+simple but very flexible. It's most important property is `format`. Read the
+`https://docs.oracle.com/en/java/javase/17/docs/api/java.logging/java/util/logging/SimpleFormatter.html[documentation of the SimpleFormatter class]`
+for more.
+
+[[asadmin]]
+=== Using Asadmin
+
+Each instance in an {productName} domain has a dedicated `server.log` file,
+and each instance and cluster has its own `logging.properties` file.
+To configure logging for an instance or a cluster,
+{productName} allows you target specific log
+files or logging properties files when you do the following:
+
+* Set log levels
+* Rotate `server.log` files or compress them into a ZIP archive
+* Change logging property attributes
+* List log levels or log attributes
+
+The following subcommands optionally accept a target specification.
+A target can be a configuration name, server name, cluster name, or instance name,
+and is specified as either an operand or as a value
+passed using the `--target` option.
+If no target is specified when using any of these subcommands, the default target is the DAS.
+
+[width="100%",cols="27%,47%,26%",options="header",]
+|===
+|Subcommand |Description |Target Specification
+|xref:reference-manual.adoc#collect-log-files[`collect-log-files`]
+|Collects all available log files into a ZIP archive.
+|``--target=``target-name
+
+|xref:reference-manual.adoc#list-log-attributes[`list-log-attributes`]
+|Lists logging attributes in the logging properties file.
+|target-name operand
+
+|xref:reference-manual.adoc#list-log-levels[`list-log-levels`]
+|Lists the loggers in the logging properties file and their log levels.
+|target-name operand
+
+|xref:reference-manual.adoc#rotate-log[`rotate-log`]
+|Rotates the log file by renaming it and creating a new log file to store new messages.
+|``--target=``target-name
+
+|xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`]
+|Sets the specified logging attributes in the logging properties file.
+|``--target=``target-name
+
+|xref:reference-manual.adoc#set-log-file-format[`set-log-file-format`]
+|Sets the log file formatter.
+|``--target=``target-name
+
+|xref:reference-manual.adoc#set-log-levels[`set-log-levels`]
+|Sets the log level for one or more loggers listed in the logging properties file.
+|``--target=``target-name
+|===
+
+
+This section contains the following examples:
+
+* <<To Change the Location of the logging.properties File>>
+* <<Setting Log Levels>>
+* <<Setting the Log File Format>>
+* <<Setting Log File Rotation>>
+
+[[to-change-the-location-of-the-logging-properties-file]]
+
+==== To Change the Location of the logging.properties File
+
+You can set the name and location of the logging properties file by
+setting the `java.util.logging.config.file` system property.
+
+[WARNING]
+====
+You have to ensure that the output log file is always used by a single instance.
+In the default logging.properties it is ensured by using the ${com.sun.aas.instanceRoot}
+which always resolves to the instance's root directory. Example:
+----
+org.glassfish.main.jul.handler.GlassFishLogHandler.file=${com.sun.aas.instanceRoot}/logs/server.log
+----
+====
+
+1. Set the `java.util.logging.config.file` system property.
++
+[source]
+----
+asadmin create-jvm-options --target=server-config -Djava.util.logging.config.file=/logging.properties
+----
+Alternatively, you can use the Administration Console to set this system property.
+
+2. To apply your change, restart all instances using this configuration. In our case it would be the DAS:
++
+[source]
+----
+asadmin restart-domain
+----
+
+[[to-change-logfile-location]]
+
+==== To Change the Location of the Log File
+
+Even in complex domain you can always find the right `logging.properties` file and
+update it manually. But probably safer is to use an asadmin command to do that.
+
+To change the name and location of the log file, first use the `list-log-attributes` command
+to obtain the current log attribute setting for the log file name and location.
+Then use the `set-log-attributes` command to specify the new name or location.
+The default target for these two commands is the DAS. However, you can
+optionally specify one of the following targets:
+
+* Configuration name — to target all instances or clusters that share a specific configuration name.
+* Server name — to target only a specific server.
+* Instance name — to target only a specific instance.
+* Cluster name — to target only a specific cluster.
+
+//-
+
+1. Ensure that the DAS is running. Remote commands require a running server.
+
+2. Use the xref:reference-manual.adoc#list-log-attributes[`list-log-attributes`]
+command in remote mode to obtain the current log attribute settings.
+The name and location of the log file is set with the
+`org.glassfish.main.jul.handler.GlassFishLogHandler.file` attribute of the
+`logging properties` file.
+Optionally you can target a configuration, server, instance, or cluster.
+If you do not specify a target, the log attribute settings for the DAS are displayed.
+
+3. Use the xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`]
+command in remote mode to define a custom name or location of the log file.
+If you do not specify a target, the log file for the DAS is targeted by default.
+If you target a cluster, the name of the cluster log file for
+each member instance can be changed (the server log file name cannot).
+
+[[example-7-1]]
+Example 7-1 Changing the Name and Location of a Cluster's Log File
+
+This example changes the name of the cluster log file for `Cluster1` to
+`cluster1.log`. `Cluster1` has two server instances: `ClusterServer1` and `ClusterServer2`.
+
+[source,text]
+----
+asadmin list-log-attributes Cluster1
+handlers        <org.glassfish.main.jul.handler.GlassFishLogHandler,org.glassfish.main.jul.handler.SimpleLogHandler,org.glassfish.main.jul.handler.SyslogHandler>
+org.glassfish.main.jul.handler.GlassFishLogHandler.buffer.capacity      \<10000>
+org.glassfish.main.jul.handler.GlassFishLogHandler.buffer.timeoutInSeconds      \<0>
+org.glassfish.main.jul.handler.GlassFishLogHandler.enabled      <true>
+org.glassfish.main.jul.handler.GlassFishLogHandler.encoding     <UTF-8>
+org.glassfish.main.jul.handler.GlassFishLogHandler.file <${com.sun.aas.instanceRoot}/logs/server.log>
+org.glassfish.main.jul.handler.GlassFishLogHandler.flushFrequency       \<1>
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter    <org.glassfish.main.jul.formatter.ODLLogFormatter>
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.excludedFields     <>
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.multiline  <true>
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.printSource        <false>
+org.glassfish.main.jul.handler.GlassFishLogHandler.redirectStandardStreams      <true>
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.compress    <false>
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.megabytes     \<100>
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.minutes       \<0>
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles     \<0>
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.rollOnDateChange    <false>
+org.glassfish.main.jul.handler.SimpleLogHandler.formatter       <org.glassfish.main.jul.formatter.UniformLogFormatter>
+org.glassfish.main.jul.handler.SimpleLogHandler.formatter.excludedFields        <>
+org.glassfish.main.jul.handler.SimpleLogHandler.formatter.printSource   <false>
+org.glassfish.main.jul.handler.SimpleLogHandler.useErrorStream  <true>
+org.glassfish.main.jul.handler.SyslogHandler.buffer.capacity    \<5000>
+org.glassfish.main.jul.handler.SyslogHandler.buffer.timeoutInSeconds    \<300>
+org.glassfish.main.jul.handler.SyslogHandler.enabled    <false>
+org.glassfish.main.jul.handler.SyslogHandler.encoding   <UTF-8>
+org.glassfish.main.jul.handler.SyslogHandler.formatter  <java.util.logging.SimpleFormatter>
+org.glassfish.main.jul.handler.SyslogHandler.host       <>
+org.glassfish.main.jul.handler.SyslogHandler.port       \<514>
+Command list-log-attributes executed successfully.
+
+asadmin set-log-attributes --target Cluster1 org.glassfish.main.jul.handler.GlassFishLogHandler.file=\${com.sun.aas.instanceRoot}/logs/cluster1.log
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.file logging attribute value set to ${com.sun.aas.instanceRoot}/logs/cluster1.log.
+The logging attributes are saved successfully for cluster-config.
+
+Command set-log-attributes executed successfully.
+
+asadmin list-log-attributes ClusterServer1
+...
+org.glassfish.main.jul.handler.GlassFishLogHandler.file <${com.sun.aas.instanceRoot}/logs/cluster1.log>
+...
+
+asadmin list-log-attributes ClusterServer2
+...
+org.glassfish.main.jul.handler.GlassFishLogHandler.file <${com.sun.aas.instanceRoot}/logs/cluster1.log>
+...
+----
+
+See Also
+
+You can view the full syntax and options of these subcommands by typing
+`asadmin help list-log-attributes` and `asadmin help set-log-attributes` at the command line.
+
+[[setting-log-levels]]
+
+==== Setting Log Levels
+
+The log level determines the granularity of the message as it is
+described in the chapter <<Level>>.
+
+When setting log levels, you can target a configuration,
+server, instance, or cluster.
+
+Setting log levels is done by using the `set-log-levels` subcommand.
+Listing log levels is done by using the `list-log-levels` subcommand.
+
+The following topics are addressed here:
+
+* <<To List Logger Levels>>
+* <<To Set the Logger Log Level>>
+* <<To Set the Handler Log Level>>
+
+[[to-list-log-levels]]
+
+===== To List Logger Levels
+
+{productName} provides the means to list all loggers and their log levels.
+Listing the loggers provides a convenient means to view current loggers
+and log levels either prior to or after making log level changes.
+
+Use the `list-log-levels` subcommand in remote mode to list the modules
+and their current log levels.
+The default target for this subcommand is the DAS.
+However, you can optionally specify one of the following targets:
+
+* Configuration name — to target all instances or clusters that share a specific configuration name.
+* Server name — to target a specific server.
+* Instance name — to target a specific instance.
+* Cluster name — to target a specific cluster.
+
+1. Ensure that the DAS is running. Remote subcommands require a running server.
+2. List the existing module loggers and log levels by using the
+xref:reference-manual.adoc#list-log-levels[`list-log-levels`] subcommand.
+
+[[example-7-2]]
+Example 7-2 Listing Logger Levels for DAS
+
+This example shows a partial list of the existing loggers and their log levels in the DAS.
+
+[source]
+----
+asadmin list-log-levels
+MBeans  <INFO>
+com.sun.enterprise.glassfish.bootstrap  <INFO>
+com.sun.enterprise.glassfish    <INFO>
+com.sun.enterprise.security     <INFO>
+com.sun.webui   <INFO>
+jakarta.enterprise.admin.rest.client    <INFO>
+jakarta.enterprise.admin.rest.connector <INFO>
+jakarta.enterprise.admin.rest   <INFO>
+jakarta.enterprise.bootstrap    <INFO>
+jakarta.enterprise.cluster.gms.admin    <INFO>
+jakarta.enterprise.cluster.gms.bootstrap        <INFO>
+jakarta.enterprise.cluster.gms  <INFO>
+jakarta.enterprise.concurrent   <INFO>
+jakarta.enterprise.config.api   <INFO>
+...
+Command list-log-levels executed successfully.
+----
+
+[[example-7-3]]
+Example 7-3 Listing Logger Levels for an Instance
+
+This example shows a partial list of the loggers and log levels for the instance `MyServer2`.
+
+[source]
+----
+asadmin list-log-levels MyServer2
+MBeans  <INFO>
+com.sun.enterprise.glassfish.bootstrap  <INFO>
+com.sun.enterprise.glassfish    <INFO>
+com.sun.enterprise.security     <INFO>
+com.sun.webui   <INFO>
+cz.acme.level   <ALL>
+jakarta.enterprise.admin.rest.client    <INFO>
+jakarta.enterprise.admin.rest.connector <INFO>
+jakarta.enterprise.admin.rest   <INFO>
+jakarta.enterprise.bootstrap    <INFO>
+jakarta.enterprise.cluster.gms.admin    <INFO>
+jakarta.enterprise.cluster.gms.bootstrap        <INFO>
+jakarta.enterprise.cluster.gms  <INFO>
+jakarta.enterprise.concurrent   <INFO>
+jakarta.enterprise.config.api   <INFO>
+...
+Command list-log-levels executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help list-log-levels` at the command line.
+
+[[to-set-the-logger-log-level]]
+
+===== To Set the Logger Log Level
+
+You will probably need to set logger levels most often.
+Let's imagine that you would need to set the most verbose logging of an application
+using the `org.acme` package (and logger names).
+
+[WARNING]
+====
+Logs may contain sensitive information.
+Despite the {productName} in default configuration doesn't log any passwords,
+before you share logs with anyone else you should verify that you don't compromise your
+system by any information contained in logs, especially if you configured more verbose log levels.
+====
+
+Then you can edit the `logging.properties` file directly, what can be quite
+more complicated it you use more than one instance, see the xref:configuring-warning[warning].
+
+Safer is to use the `set-log-levels` subcommand:
+[[example-7-4]]
+Example 7-5 Changing the Logger Log Level for a Cluster
+[source]
+----
+asadmin set-log-levels --target Cluster1 org.acme=ALL
+org.acme package set with log level ALL.These logging levels are set for Cluster1.
+Command set-log-levels executed successfully.
+----
+
+[[example-7-5]]
+Example 7-5 Setting Log Levels for Multiple Loggers
+
+The following example sets the log level for security and web container
+loggers in the DAS.
+
+[source]
+----
+asadmin set-log-levels jakarta.enterprise.system.core.security=FINE\
+:jakarta.enterprise.system.container.web=WARNING
+jakarta.enterprise.system.core.security package set with log level FINE.jakarta.enterprise.system.container.web package set with log level WARNING.These logging levels are set for server.
+Command set-log-levels executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-levels` at the command line.
+
+
+[[to-set-the-handler-log-level]]
+
+===== To Set the Handler Log Level
+
+The handler log level specifies a severity level filter to prevent overloading
+of the handler. Default value is usually given by handler's implementation
+and reflect targets and expected throughput of the handler.
+For example, you would not want to send all `FINEST` LogRecords by e-mail,
+but you would like to see them in a local log file.
+
+Because JUL uses the same property syntax for <<Logger>> levels as
+for <<Handler>> levels you can use both `set-log-levels` and `set-log-attributes`
+subcommands to get the same result (with a bit different syntax).
+
+Both commands in remote mode.
+The default target for this subcommand is the DAS.
+However, you can optionally specify one of the following targets using the `--target` option:
+
+* Configuration name — to target all instances or clusters that share a specific configuration name.
+* Server name — to target a specific server.
+* Instance name — to target a specific instance.
+* Cluster name — to target a specific cluster.
+
+//-
+
+1. Ensure that the DAS is running.
+2. Set the log level by using the
+xref:reference-manual.adoc#set-log-levels[`set-log-attributes`] subcommand,
+specifying the log level of the `org.glassfish.main.jul.handler.GlassFishLogHandler` handler.
+For example:
++
+[source]
+----
+org.glassfish.main.jul.handler.GlassFishLogHandler <ALL>
+----
+
+[[example-7-6]]
+Example 7-6 Changing the Handler Log Level
+
+This example sets the log level for `GlassFishLogHandler` in the DAS to `INFO`:
+[source]
+----
+asadmin set-log-attributes org.glassfish.main.jul.handler.GlassFishLogHandler.level=INFO
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.level logging attribute value set to INFO.
+The logging attributes are saved successfully for server.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+
+[[setting-the-log-file-format]]
+
+==== Setting the Log File Format
+
+You can set the format for log records in log files.
+The following topics are addressed here:
+
+* <<To Set the Log File Format>>
+* <<To Exclude Fields in Logs>>
+* <<To Disable Multiline Mode>>
+
+[[to-set-the-log-file-format]]
+
+===== To Set the Log File Format
+
+Use the `set-log-file-format` subcommand in remote mode to set the
+formatter used by {productName} to format log records in log files.
+This command is limited to the `GlassFishLogHandler` settings.
+You can also use the `set-log-attributes` subcommand which is more flexible.
+Log formats for all server instances in a cluster will be the same.
+For information about log formats, see <<Formatters>>.
+
+[NOTE]
+====
+Changing the log format forces log rotation to avoid mixed format in the same file.
+====
+
+1. Ensure that the DAS is running. Remote commands require a running server.
+2. Set the formatter by using the
+xref:reference-manual.adoc#redeploy[`set-log-file-format`] subcommand.
+3. To apply your change, restart affected instances or clusters with the synchronization enabled.
+
+[[example-7-7]]
+Example 7-7 Setting the Log File Format using `set-log-file-format`
+
+This example sets the log file format to `OneLineFormatter` for standalone instance
+`ManagedServer1` using the `set-log-file-format` subcommand.
+
+[source]
+----
+asadmin set-log-file-format --target ManagedServer1 org.glassfish.main.jul.formatter.OneLineFormatter
+The log file formatter is set to org.glassfish.main.jul.formatter.OneLineFormatter for instance server.
+Command set-log-file-format executed successfully.
+----
+
+[[example-7-8]]
+Example 7-8 Setting the Log File Format using `set-log-attributes`
+
+This example sets the log file format to `ULF` for standalone instance
+`ManagedServer1` using the `set-log-attributes` subcommand.
+
+[source]
+----
+asadmin set-log-attributes --target ManagedServer1 \
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter=org.glassfish.main.jul.formatter.OneLineFormatter
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter logging attribute value set to org.glassfish.main.jul.formatter.OneLineFormatter.
+The logging attributes are saved successfully for ManagedServer1-config.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the `set-log-file-format`
+subcommand by typing `asadmin help set-log-file-format` at the command
+line. You can view the full syntax and options of the
+`set-log-attributes` subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+[[to-exclude-fields-in-log-records]]
+
+===== To Exclude Fields in Logs
+
+Use the `set-log-attributes` subcommand in remote mode to exclude
+specific name-value fields from log records. If the `excludeFields`
+attribute is not specified, all name-value fields are included.
+The following fields can be excluded:
+
+* `tid`
+* `levelVal`
+
+//-
+
+1. Ensure that the DAS is running. Remote commands require a running server.
+
+2. Exclude fields by using the xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`]
+subcommand, specifying the attribute and the fields to exclude.
+
+3. To apply your change, restart {productName}.
+
+[[example-7-9]]
+Example 7-9 Excluding Fields in the ODLLogFormatter
+
+This example excludes the `tid` (thread ID and name) and `levelValue` (numerical value of the <<Level>>)
+name-value fields in log records for standalone instance `ManagedServer1`:
+
+[source]
+----
+asadmin set-log-attributes --target ManagedServer1 \
+org.glassfish.main.jul.formatter.ODLLogFormatter.excludedFields=tid,levelValue
+
+org.glassfish.main.jul.formatter.ODLLogFormatter.excludedFields logging attribute value set to tid,levelValue.
+The logging attributes are saved successfully for ManagedServer1-config.
+
+Command set-log-attributes executed successfully.
+----
+
+[NOTE]
+====
+If there's the same attribute of the handler's `formatter` property, it has higher priority.
+====
+
+[[example-7-10]]
+Example 7-10 Excluding Fields in the GlassFishLogHandler
+
+This example excludes the `tid` (thread ID and name) and `levelValue` (numerical value of the <<Level>>)
+name-value fields in log records for standalone instance `ManagedServer1`:
+
+[source]
+----
+asadmin set-log-attributes --target ManagedServer1 \
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.excludedFields=tid,levelValue
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.excludedFields logging attribute value set to tid,levelValue.
+The logging attributes are saved successfully for ManagedServer1-config.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+[[to-disable-multiline-mode]]
+
+===== To Disable Multiline Mode
+
+Use the `set-log-attributes` command in remote mode to disable the multiline mode.
+When multiline mode is enabled (the default), the body of a log
+message starts on a new line after the message header and is indented.
+
+1. Ensure that the DAS is running. Remote commands require a running server.
+
+2. Set multiline mode by using the
+xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`] subcommand,
+specifying the formatter attribute and its value (`true` or `false`):
+
+3. To apply your change, restart the instance.
+
+[[example-7-11]]
+Example 7-11 Disabling the Multiline Mode in the log file
+
+Multiline mode is enabled by default.
+The following example disables multiline mode in log files
+for standalone instance `ManagedServer1`:
+
+[source]
+----
+asadmin set-log-attributes --target ManagedServer1 \
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.multiline=false
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.formatter.multiline logging attribute value set to false.
+The logging attributes are saved successfully for ManagedServer1-config.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+[[setting-log-file-rotation]]
+
+==== Setting Log File Rotation
+
+As explained in <<The Server Log File>>, {productName} by default rotates
+the `server.log` file when it's size exceeds 100 MB.
+However, you can change the default rotation settings.
+For example, you can change the file size limit at which the server
+rotates the log file or you can configure a server to rotate log files based
+on a time interval.
+In addition to changing when rotation occurs, you can also:
+
+* Specify the maximum number of rotated files that can accumulate.
+By default, {productName} does not limit the number of rotated log files that are retained.
+However, you can set a limit.
+After the number of log files reaches this limit, subsequent file
+rotations delete the oldest rotated log file.
+
+* Rotate the log file manually.
+A manual rotation forces the immediate rotation of the target log file.
+
+Changing the default log rotation settings is done using the
+`set-log-attributes` subcommand, and rotating log files manually is done
+using the `rotate-log` subcommand, as explained in the following
+sections:
+
+* <<To Change the Rotation File Size>>
+* <<To Change the File Rotation Interval>>
+* <<To Change the Limit Number of Archive Log Files>>
+* <<To Rotate Log Files Manually>>
+
+[[to-change-the-rotation-file-size]]
+
+===== To Change the Rotation File Size
+
+Use the `set-log-attributes` subcommand in remote mode to change the log
+rotation file size.
+The default target of this subcommand is the DAS.
+Optionally, you can target a configuration, server, instance, or cluster.
+
+1. Ensure that the DAS is running.
+
+2. Change the rotation file size limit by using the
+xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`] subcommand,
+specifying the attribute and the desired limit in megabytes:
++
+[source]
+----
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.megabytes=1000
+----
+
+3. Changes will be applied automatically after saving the change
+to the instance's `logging.properties` file.
+
+[[example-7-12]]
+Example 7-12 Changing the Rotation Size
+
+The following example sets the log file rotation size to 1 MB for the
+standalone instance `ManagedServer1`:
+
+[source]
+----
+asadmin set-log-attributes --target ManagedServer1 \
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.megabytes=1000
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.megabytes logging attribute value set to 1000.
+The logging attributes are saved successfully for ManagedServer1-config.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+[[to-change-the-file-rotation-interval]]
+
+===== To Change the File Rotation Interval
+
+Use the `set-log-attributes` subcommand in remote mode to change the log
+file rotation time limit interval.
+The default target of this subcommand is the DAS.
+Optionally, you can target a configuration, server, instance, or cluster.
+The default value is `0`.
+
+1. Ensure that the DAS is running.
+
+2. Change the rotation time limit by using the
+xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`] subcommand,
+specifying the following attribute and the desired limit in minutes:
++
+[source]
+----
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.minutes=minutes
+----
+
+3. Changes will be applied automatically after saving the change
+to the instance's `logging.properties` file.
+
+[[example-7-13]]
+Example 7-13 Changing the Rotation Interval
+
+The following example sets the log file rotation time limit for the
+cluster `Cluster1`, and all it's instances.
+
+[source]
+----
+asadmin set-log-attributes --target Cluster1 \
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.minutes=60
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.limit.minutes logging attribute value set to 60.
+The logging attributes are saved successfully for cluster-config.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+[[to-change-the-limit-number-of-archive-log-files]]
+
+===== To Change the Limit Number of Archive Log Files
+
+Use the `set-log-attributes` subcommand in remote mode to change the limit
+on the number of log files that the server creates to store old log messages.
+The default target of this subcommand is the DAS.
+Optionally, you can target a configuration, server, instance, or cluster.
+The default limit value is `0`, which results in no limit placed on the number
+of rotated log files that are retained.
+
+1. Ensure that the DAS is running.
+2. Change the limit number of retained log files by using the
+xref:reference-manual.adoc#set-log-attributes[`set-log-attributes`] subcommand,
+specifying the following attribute and the desired file limit number:
++
+[source]
+----
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles=number
+----
+
+3. Changes will be applied automatically after saving the change
+to the instance's effective `logging.properties` file.
+
+[[example-7-14]]
+Example 7-14 Changing the Limit Number of Archived Log Files
+
+The following example sets the log limit number of retained log files
+for the DAS to `10`.
+
+[source]
+----
+asadmin set-log-attributes \
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles=10
+
+org.glassfish.main.jul.handler.GlassFishLogHandler.rotation.maxArchiveFiles logging attribute value set to 10.
+The logging attributes are saved successfully for server.
+
+Command set-log-attributes executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help set-log-attributes` at the command line.
+
+[[to-rotate-log-files-manually]]
+
+===== To Rotate Log Files Manually
+
+You can rotate log files manually by using the `rotate-log` subcommand in remote mode.
+The default target of this subcommand is the DAS.
+Optionally, you can target a configuration, server, instance, or cluster.
+When you use this subcommand, the target log file is immediately moved
+to a new time-stamped file and a new log file is created.
+
+Because log rotation is a dynamic operation, you do not need to restart
+{productName} for changes to take effect.
+
+1. Ensure that the target server or cluster is running.
+2. Rotate log files by using
+the xref:reference-manual.adoc#rotate-log[`rotate-log`] subcommand.
+
+[[example-7-15]]
+Example 7-15 Rotating Log Files Manually
+
+The following example rotates the `server.log` file for `ManagedServer2`
+to ``server.log_yyyy-mm-dd`T`hh-mm-ss``, where ``yyyy-mm-dd`T`hh-mm-ss``
+represents the time when the file is rotated, and creates a new `server.log` file.
+
+[source]
+----
+asadmin rotate-log --target ManagedServer2
+Rotated log on instance named 'ManagedServer2'.
+Command rotate-log executed successfully.
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help rotate-log` at the command line.
+
+
+[[viewing-log-records]]
+
+=== Viewing Log Records
+
+The recommended means for general viewing of logging information is to
+use the Log Viewer in the Administration Console.
+The Log Viewer simplifies reading, searching, and filtering log file contents.
+For instructions, see the Administration Console online help.
+
+{productName} also allows you to collect log
+files into a ZIP archive, which provides the means to obtain and view
+log files for an instance or cluster even when it is not currently running.
+The following section explains how to collect all available log
+files for an instance or cluster and compile them into a single ZIP archive,
+which is done by using the `collect-log-files` subcommand.
+
+[[to-collect-log-files-into-a-zip-archive]]
+
+==== To Collect Log Files into a ZIP Archive
+
+Use the `collect-log-files` subcommand in remote mode to collect log
+files into a ZIP archive. The default target of this subcommand is the DAS.
+Optionally you can target a configuration, server, instance, or cluster.
+
+1. Ensure that the target server or cluster is running. Remote subcommands require a running server.
+2. Use the xref:reference-manual.adoc#collect-log-files[`collect-log-files`] subcommand
+to create the ZIP archive.
++
+The default location in which the ZIP archive is created is the
+domain-dir``/collected-logs`` directory.
+The `collect-log-files` subcommand allows you to specify a nondefault directory
+in which the ZIP archive is to be created by using the `--retrieve` option set to `true`,
+followed by the directory name.
++
+The name of the ZIP file contains the timestamp, as follows:
++
+``log_yyyy-mm-dd_hh-min-sec.zip``
+
+[[example-7-16]]
+Example 7-16 Collecting and Downloading Log Files as a ZIP File
+
+This example shows collecting the log files for the cluster `Cluster1`
+and compiling them into a ZIP archive in the `/tmp/space/output` directory.
+
+[source]
+----
+asadmin collect-log-files --target Cluster1 --retrieve true /tmp/space/output
+Log files are downloaded for ClusterServer1.
+Log files are downloaded for ClusterServer2.
+Created Zip file under /tmp/space/output/log_2022-08-06_14-57-53.zip.
+Command collect-log-files executed successfully.
+----
+
+When the ZIP file created by the preceding command is uncompressed, the
+following directory structure is created:
+
+[source]
+----
+as-install-parent/
+  glassfish/
+    domains/
+      domain-dir/
+        collected_logs/
+          logs/
+            ClusterServer1/
+              server.log
+            ClusterServer2/
+              server.log
+----
+
+See Also
+
+You can view the full syntax and options of the subcommand by typing
+`asadmin help collect-log-files` at the command line.
+
+[[listing-loggers]]
+
+=== Listing Loggers
+
+You can list and view information about all public loggers in your
+distribution of {productName}.
+
+[[to-list-loggers]]
+
+==== To List Loggers
+
+Use the `list-loggers` subcommand in remote mode to list the logger
+name, subsystem, and description of subsystem loggers in your distribution of
+{productName}. Class name based loggers are not listed.
+
+1. Ensure that the DAS is running. Remote commands require a running server.
+2. List loggers by using
+the xref:reference-manual.adoc#list-loggers[`list-loggers`] subcommand.
+
+[[example-7-17]]
+Example 7-17 Listing Loggers
+
+This example lists the logger name, subsystem, and description for each logger.
+Some lines of output are omitted from this example for readability.
+
+[source]
+----
+asadmin list-loggers
+Logger Name                                  Subsystem               Logger Description
+...
+jakarta.enterprise.system.core                CORE                   Core Kernel
+jakarta.enterprise.system.core.ee             AS-CORE                Jakarta EE Core Kernel
+jakarta.enterprise.system.core.security       SECURITY               Core Security
+jakarta.enterprise.system.core.security.web   SECURITY               Core-ee Security Logger
+jakarta.enterprise.system.jmx                 JMX                    JMX System Logger
+jakarta.enterprise.system.security.ssl        SECURITY - SSL         Security - SSL
+...
+Command list-loggers executed successfully.
+----
+
+See Also
+
+You can also view the full syntax and options of the subcommand by
+typing `asadmin help list-loggers` at the command line.
+
+As an alternative you can take a look into the `default-logging.properties` file
+which should contain all useful basic loggers set to a default level. The same
+cofiguration is distributed in the new domain1's `logging.properties` file, so
+you can print all actual logger names and levels as we described in <<To List Logger Levels>>.
+

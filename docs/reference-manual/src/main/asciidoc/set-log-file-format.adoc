@@ -1,0 +1,88 @@
+type=page
+status=published
+title=set-log-file-format
+next=set-log-levels.html
+prev=set-log-attributes.html
+~~~~~~
+
+= set-log-file-format
+
+[[set-log-file-format]]
+
+== set-log-file-format
+
+Sets the formatter to be used for the server log file
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] set-log-file-format [--help]
+[--target target]
+[formatter]
+----
+
+=== Description
+
+The `set-log-file-format` subcommand sets the formatter to be used for
+the server log file for the specified target.
+
+{productName} provides the ULF (UniformLogFormatter), ODL (Oracle
+Diagnostics Logging) and OneLine (OneLineFormatter) formatters.
+A custom formatter can also be used by specifying the fully
+qualified name of a class that extends the
+`java.util.logging.Formatter` class.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  Specifies the target for which the formatter is being set. Specify the
+  name of the server domain, instance, or cluster. If this option is
+  omitted, logger attributes are set for the default server.
+
+=== Operands
+
+formatter::
+  Specifies the fomatter to be used for the server log file.
+  Valid values are ULF, ODL, OneLine or the fully qualified name of the custom
+  formatter class to be used to render the log files.
+  The default value is ODL.
+
+=== Examples
+
+[[sthref2054]]
+
+==== Example 1   Setting the Log File Format
+
+This example sets the server log file format to `ULF` for `server1`.
+
+[source]
+----
+asadmin> set-log-file-format --target server1 ULF
+Command set-log-file-format executed successfully.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:list-loggers.adoc#list-loggers[`list-loggers`(1)]
+
+"xref:administration-guide.adoc#administering-the-logging-service[Administering the Logging Service]" in {productName} Administration Guide
+
+

@@ -1,0 +1,102 @@
+type=page
+status=published
+title=enable
+next=enable-http-lb-application.html
+prev=disable-secure-admin-principal.html
+~~~~~~
+
+= enable
+
+[[enable]]
+
+== enable
+
+Enables the component
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] enable [--help]
+[--target target_name] component_name
+----
+
+=== Description
+
+The `enable` subcommand enables the specified deployed component. If the
+component is already enabled, then it is re-enabled. If it has not been
+deployed, then an error message is returned.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+`--target`::
+  This option specifies the target on which you are enabling the
+  component. Valid values are:
+
+  `server`;;
+    Enables the default server instance `server` and is the default
+    value.
+  domain_name;;
+    Enables the named domain.
+  cluster_name;;
+    Enables every server instance in the cluster.
+  instance_name;;
+    Enables a particular clustered or stand-alone server instance.
+
+=== Operands
+
+component_name::
+  name of the component to be enabled. +
+  The name can include an optional version identifier, which follows the
+  name and is separated from the name by a colon (`:`). The version
+  identifier must begin with a letter or number. It can contain
+  alphanumeric characters plus underscore (`_`), dash (`-`), and period
+  (`.`) characters. For more information about module and application
+  versions, see "xref:application-deployment-guide.adoc#module-and-application-versions[
+  Module and Application Versions]" in
+  {productName} Application Deployment Guide. +
+  At most one version of a module or application can be enabled on a
+  server instance. All other versions are disabled. Enabling one version
+  automatically disables all others.
+
+=== Examples
+
+[[sthref1100]]
+
+==== Example 1   Enabling a Component
+
+This example enables the disabled component, `sampleApp`.
+
+[source]
+----
+asadmin> enable sampleApp
+Command enable executed successfully
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:deploy.adoc#deploy[`deploy`(1)],
+xref:disable.adoc#disable[`disable`(1)],
+xref:undeploy.adoc#undeploy[`undeploy`(1)]
+
+xref:application-deployment-guide.adoc#GSDPG[{productName} Application Deployment
+Guide]
+
+

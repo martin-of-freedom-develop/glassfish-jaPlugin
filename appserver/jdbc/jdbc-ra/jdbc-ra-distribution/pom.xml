@@ -1,0 +1,199 @@
+<?xml version="1.0"?>
+<!--
+
+    Copyright (c) 2010, 2021 Oracle and/or its affiliates. All rights reserved.
+
+    This program and the accompanying materials are made available under the
+    terms of the Eclipse Public License v. 2.0, which is available at
+    http://www.eclipse.org/legal/epl-2.0.
+
+    This Source Code may also be made available under the following Secondary
+    Licenses when the conditions for such availability set forth in the
+    Eclipse Public License v. 2.0 are satisfied: GNU General Public License,
+    version 2 with the GNU Classpath Exception, which is available at
+    https://www.gnu.org/software/classpath/license.html.
+
+    SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
+-->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.glassfish.main.jdbc.jdbc-ra</groupId>
+        <artifactId>jdbc-ra</artifactId>
+        <version>7.1.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>org.glassfish.main.jdbc.jdbc-ra.jdbc-ra-distribution</groupId>
+    <artifactId>jdbc-ra</artifactId>
+    <packaging>distribution-fragment</packaging>
+
+    <name>Distribution Module for JDBC Resource Adapter</name>
+
+    <properties>
+        <target.application.directory>${project.build.outputDirectory}/glassfish/lib/install/applications</target.application.directory>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.glassfish.main.jdbc.jdbc-ra.jdbc-core</groupId>
+            <artifactId>jdbc-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.jdbc.jdbc-ra.jdbc40</groupId>
+            <artifactId>jdbc40</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.main.jdbc</groupId>
+            <artifactId>templates</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-classes</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includeArtifactIds>jdbc-core,jdbc40</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/unpackedDependencies</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-templates</id>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includeArtifactIds>templates</includeArtifactIds>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <attach>false</attach>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>jdbc-ra-cp</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-cp.xml</descriptor>
+                            </descriptors>
+                            <outputDirectory>${target.application.directory}/__cp_jdbc_ra</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbc-ra-dm</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-dm.xml</descriptor>
+                            </descriptors>
+                            <outputDirectory>${target.application.directory}/__dm_jdbc_ra</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbc-ra-ds</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-ds.xml</descriptor>
+                            </descriptors>
+                            <outputDirectory>${target.application.directory}/__ds_jdbc_ra</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbc-ra-xa</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-xa.xml</descriptor>
+                            </descriptors>
+                            <outputDirectory>${target.application.directory}/__xa_jdbc_ra</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>jdbc-ra-manifest-4-all-apps</id>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/jdbcra-manifest.xml</descriptor>
+                            </descriptors>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>false</addClasspath>
+                                    <addDefaultEntries>true</addDefaultEntries>
+                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                </manifest>
+                                <manifestEntries>
+                                    <probe-provider-class-names>
+com.sun.gjc.monitoring.StatementCacheProbeProvider,com.sun.gjc.monitoring.SQLTraceProbeProvider,com.sun.gjc.monitoring.StatementLeakProbeProvider
+                                    </probe-provider-class-names>
+                                </manifestEntries>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>jdbc-ra-manifest-4-all-apps</id>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <phase>prepare-package</phase>
+                        <configuration>
+                            <target>
+                                <unjar src="${project.build.directory}/jdbc-ra-manifest.jar"
+                                    dest="${target.application.directory}/__cp_jdbc_ra" />
+                                <unjar src="${project.build.directory}/jdbc-ra-manifest.jar"
+                                    dest="${target.application.directory}/__dm_jdbc_ra" />
+                                <unjar src="${project.build.directory}/jdbc-ra-manifest.jar"
+                                    dest="${target.application.directory}/__ds_jdbc_ra" />
+                                <unjar src="${project.build.directory}/jdbc-ra-manifest.jar"
+                                    dest="${target.application.directory}/__xa_jdbc_ra" />
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

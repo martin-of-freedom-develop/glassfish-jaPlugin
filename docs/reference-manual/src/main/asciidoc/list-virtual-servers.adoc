@@ -1,0 +1,86 @@
+type=page
+status=published
+title=list-virtual-servers
+next=list-web-context-param.html
+prev=list-transports.html
+~~~~~~
+
+= list-virtual-servers
+
+[[list-virtual-servers]]
+
+== list-virtual-servers
+
+Lists the existing virtual servers
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-virtual-servers [--help]
+[target]
+----
+
+=== Description
+
+The `list-virtual-servers` subcommand lists the existing virtual
+servers. This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  Restricts the listing to virtual servers for a specified target. Valid
+  values are as follows:
+
+  `server`;;
+    Lists the virtual servers for the default server instance. This is
+    the default value.
+  configuration-name;;
+    Lists the virtual servers for the specified configuration.
+  cluster-name;;
+    Lists the virtual servers for all server instances in the specified
+    cluster.
+  instance-name;;
+    Lists the virtual servers for the specified server instance.
+
+=== Examples
+
+[[sthref1855]]
+
+==== Example 1   Listing Virtual Servers
+
+The following command lists all the virtual servers for the server
+instance:
+
+[source]
+----
+asadmin> list-virtual-servers
+server
+__asadmin
+Command list-virtual-servers executed successfully.
+----
+
+=== Exit Status
+
+0::
+  command executed successfully
+1::
+  error in executing the command
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-virtual-server.adoc#create-virtual-server[`create-virtual-server`(1)],
+xref:delete-virtual-server.adoc#delete-virtual-server[`delete-virtual-server`(1)]
+
+

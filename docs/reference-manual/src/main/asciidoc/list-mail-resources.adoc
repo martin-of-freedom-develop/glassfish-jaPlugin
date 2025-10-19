@@ -1,0 +1,86 @@
+type=page
+status=published
+title=list-mail-resources
+next=list-managed-executor-services.html
+prev=list-log-levels.html
+~~~~~~
+
+= list-mail-resources
+
+[[list-mail-resources]]
+
+== list-mail-resources
+
+Lists the existing Jakarta Mail session resources
+
+=== Synopsis
+
+[source]
+----
+asadmin [asadmin-options] list-mail-resources [--help]
+[target]
+----
+
+=== Description
+
+The `list-mail-resources` subcommand lists the existing Jakarta Mail
+session resources.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  This operand specifies the target for which the Jakarta Mail session
+  resources are to be listed. Valid values are:
+
+  `server`;;
+    Lists the resources for the default server instance. This is the
+    default value.
+  `domain`;;
+    Lists the resources for the domain.
+  cluster_name;;
+    Lists the resources for the specified cluster.
+  instance_name;;
+    Lists the resources for a particular server instance.
+
+=== Examples
+
+[[sthref1541]]
+
+==== Example 1   Listing Jakarta Mail Resources
+
+This example lists the Jakarta Mail session resources for the server
+instance.
+
+[source]
+----
+asadmin> list-mail-resources
+mail/MyMailSession
+Command list-mail-resources executed successfuly.
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-mail-resource.adoc#create-mail-resource[`create-mail-resource`(1)],
+xref:delete-mail-resource.adoc#delete-mail-resource[`delete-mail-resource`(1)]
+
+

@@ -1,0 +1,86 @@
+type=page
+status=published
+title=list-jndi-resources
+next=list-jobs.html
+prev=list-jndi-entries.html
+~~~~~~
+
+= list-jndi-resources
+
+[[list-jndi-resources]]
+
+== list-jndi-resources
+
+Lists all existing JNDI resources
+
+=== Synopsis
+
+[source]
+----
+list-jndi-resources [--help] [target]
+----
+
+=== Description
+
+The `list-jndi-resources` subcommand identifies all existing JNDI resources.
+
+This subcommand is supported in remote mode only.
+
+=== Options
+
+asadmin-options::
+  Options for the `asadmin` utility. For information about these
+  options, see the xref:asadmin.adoc#asadmin[`asadmin`(1M)] help page.
+`--help`::
+`-?`::
+  Displays the help text for the subcommand.
+
+=== Operands
+
+target::
+  The target for which the JNDI resources are to be listed. Valid values
+  are as follows:
+
+  `server`;;
+    Lists the JNDI resources on the default server instance. This is the
+    default value.
+  configuration-name;;
+    Lists the JNDI resources for the specified configuration.
+  cluster-name;;
+    Lists the JNDI resources on all server instances in the specified
+    cluster.
+  instance-name;;
+    Lists the JNDI resources on a specified server instance.
+
+=== Examples
+
+[[sthref1597]]
+
+==== Example 1   Listing JNDI Resources
+
+This example lists the JNDI resources on the default server instance.
+
+[source]
+----
+asadmin> list-jndi-resources
+jndi_resource1
+jndi_resource2
+jndi_resource3
+Command list-jndi-resources executed successfully
+----
+
+=== Exit Status
+
+0::
+  subcommand executed successfully
+1::
+  error in executing the subcommand
+
+=== See Also
+
+xref:asadmin.adoc#asadmin[`asadmin`(1M)]
+
+xref:create-jndi-resource.adoc#create-jndi-resource[`create-jndi-resource`(1)],
+xref:delete-jndi-resource.adoc#delete-jndi-resource[`delete-jndi-resource`(1)]
+
+
